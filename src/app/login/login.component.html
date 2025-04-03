@@ -1,0 +1,62 @@
+<!-- src/app/components/login/login.component.html -->
+<div class="login-container">
+    <!-- Left side - Logo -->
+    <div class="logo-section">
+      <div class="logo-container">
+        <!-- Inline SVG logo -->
+        <img src="images/logo.svg" alt="Description">
+   
+      </div>
+    </div>
+   
+    <!-- Right side - Login Form -->
+    <div class="form-section">
+      <div class="login-card">
+        <h2 class="login-title">Connectez-vous</h2>
+   
+        <form (ngSubmit)="login(loginForm.value)" #loginForm="ngForm" class="login-form">
+          <div class="form-group">
+            <label for="email">E-Mail</label>
+            <div class="input-container">
+              <input ngModel=""
+                type="email"
+                id="email"
+                name="email"
+                
+                placeholder="vous@gmail.com"
+                required>
+            </div>
+          </div>
+   
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="input-container">
+              <input ngModel=""
+                type="password"
+                id="password"
+                name="password"
+               
+                placeholder="Entrez votre mot de passe"
+                required>
+            </div>
+          </div>
+   
+          <div *ngIf="errorMessage" class="error-message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="error-icon">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            {{ errorMessage }}
+          </div>
+   
+          <button type="submit" class="login-button" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Se connecter</span>
+            <div *ngIf="isLoading" class="loading-spinner">
+              <div class="spinner"></div>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
