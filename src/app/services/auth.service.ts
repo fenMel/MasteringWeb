@@ -112,7 +112,14 @@ export class AuthService {
     }
     const jwtHelper = new JwtHelperService();
     const roles = jwtHelper.decodeToken(this.jwtToken).roles;
-    return roles.includes('JURY');
+    
+    // Si les rôles sont des objets avec une propriété "authority"
+    if (roles && roles.length > 0 && roles[0].authority) {
+      return roles.some((role: any) => role.authority === 'JURY');
+    }
+    
+    // Si les rôles sont des chaînes simples
+    return roles && roles.includes('JURY');
   }
 
   isApprenant() {
