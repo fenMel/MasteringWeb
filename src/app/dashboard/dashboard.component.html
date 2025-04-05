@@ -1,0 +1,5 @@
+<div class="text-center">
+    <h2 class="text-bg-info text-white"> Welcome {{ authService.isConnected()?.username }} </h2>
+    <h3 class="text-info"> Your role is {{ authService.isConnected()?.roles[0].authority }} </h3>
+    <button class="btn btn-outline-danger" (click)="authService.logout()" > <i class="fas fa-power-off"></i> </button>
+</div>
