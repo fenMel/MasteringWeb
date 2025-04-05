@@ -1,5 +1,59 @@
-<div class="text-center">
-    <h2 class="text-bg-info text-white"> Welcome {{ authService.isConnected()?.username }} </h2>
-    <h3 class="text-info"> Your role is {{ authService.isConnected()?.roles[0].authority }} </h3>
-    <button class="btn btn-outline-danger" (click)="authService.logout()" > <i class="fas fa-power-off"></i> </button>
+<div class="evaluation-container">
+  <!-- En-tête avec le logo Mastering et le titre du système -->
+  <header class="mastering-header">
+    <div class="header-top">
+      <h2>MASTERING</h2>
+    </div>
+    <div class="header-bottom">
+      <h2 class="system-title">Système d'Évaluation - Espace Jury</h2>
+    </div>
+  </header>
+  
+  <!-- Conteneur principal avec sidebar -->
+  <div class="content-wrapper">
+    <!-- Barre latérale gauche -->
+    <div class="sidebar">
+      <div class="sidebar-menu">
+        <div class="menu-item" [class.active]="activeMenu === 'tableau'">
+          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+        </div>
+        <div class="menu-item active" [class.active]="activeMenu === 'soutenances'">
+          <a (click)="setActiveMenu('soutenances')">Mes soutenances</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
+          <a (click)="setActiveMenu('evaluations')">Évaluations récentes</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'deliberations'">
+          <a (click)="setActiveMenu('deliberations')">Délibérations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'parametres'">
+          <a (click)="setActiveMenu('parametres')">Paramètres</a>
+        </div>
+      </div>
+      
+      <div class="logout-btn-container">
+        <button class="logout-btn" (click)="authService.logout()">
+          Se déconnecter
+        </button>
+      </div>
+    </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="authService.isJury()" class="main-content">
+    <!-- Vous pourrez ajouter ici le contenu qui change en fonction du menu sélectionné -->
+    <h1>Contenu du {{ activeMenu }}</h1>
+  </div>
 </div>
+</div>
+<footer class="mastering-footer">
+  <div class="footer-content">
+    <div class="footer-left">
+      <p>© 2025 MASTERING - Système d'Évaluation</p>
+    </div>
+    <div class="footer-right">
+      <a >Politique de confidentialité</a>
+      <a >Mentions légales</a>
+      <a >Support</a>
+    </div>
+  </div>
+</footer>
