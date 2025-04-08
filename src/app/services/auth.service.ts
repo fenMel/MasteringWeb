@@ -94,7 +94,14 @@ export class AuthService {
     }
     const jwtHelper = new JwtHelperService();
     const roles = jwtHelper.decodeToken(this.jwtToken).roles;
-    return roles.includes('CORDINATEUR');
+    
+    // Si les rôles sont des objets avec une propriété "authority"
+    if (roles && roles.length > 0 && roles[0].authority) {
+      return roles.some((role: any) => role.authority === 'CORDINATEUR');
+    }
+    
+    // Si les rôles sont des chaînes simples
+    return roles && roles.includes('CORDINATEUR');
   }
 
   isCandidat() {
@@ -102,8 +109,29 @@ export class AuthService {
       this.getTokenFromSessionStorage();
     }
     const jwtHelper = new JwtHelperService();
-    const roles = jwtHelper.decodeToken(this.jwtToken).roles;
-    return roles.includes('CANDIDAT');
+    const decodedToken = jwtHelper.decodeToken(this.jwtToken);
+    console.log("Token décodé:", decodedToken);
+    
+    const roles = decodedToken.roles;
+    console.log("Structure des rôles:", JSON.stringify(roles));
+    
+    // Vérifier si roles est un tableau d'objets avec authority
+    if (roles && Array.isArray(roles) && roles.length > 0 && roles[0].authority) {
+      const result = roles.some((role: any) => role.authority === 'CANDIDAT');
+      console.log("Vérification par authority:", result);
+      return result;
+    }
+    
+    // Vérifier si roles est un tableau de chaînes
+    if (roles && Array.isArray(roles)) {
+      const result = roles.includes('CANDIDAT');
+      console.log("Vérification par chaîne:", result);
+      return result;
+    }
+    
+    // Vérification plus générique
+    console.log("Aucune méthode de vérification n'a fonctionné");
+    return false;
   }
 
   isJury() {

@@ -1,3 +1,4 @@
+<!-- Structure du tableau de bord adaptée à votre AuthService existant -->
 <div class="evaluation-container">
   <!-- En-tête avec le logo Mastering et le titre du système -->
   <header class="mastering-header">
@@ -5,19 +6,19 @@
       <h2>MASTERING</h2>
     </div>
     <div class="header-bottom">
-      <h2 class="system-title">Système d'Évaluation - Espace Jury</h2>
+        <h2 class="system-title">{{ getRoleTitle() }}</h2>
     </div>
   </header>
   
   <!-- Conteneur principal avec sidebar -->
   <div class="content-wrapper">
-    <!-- Barre latérale gauche -->
-    <div class="sidebar">
+    <!-- Barre latérale gauche pour jury -->
+    <div class="sidebar" *ngIf="authService.isJury()">
       <div class="sidebar-menu">
         <div class="menu-item" [class.active]="activeMenu === 'tableau'">
           <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
         </div>
-        <div class="menu-item active" [class.active]="activeMenu === 'soutenances'">
+        <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
           <a (click)="setActiveMenu('soutenances')">Mes soutenances</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
@@ -37,23 +38,119 @@
         </button>
       </div>
     </div>
+ <!-- Nouvelle barre latérale pour coordinateur -->
+ <div class="sidebar" *ngIf="authService.isCoordinateur()">
+  <div class="sidebar-menu">
+    <div class="menu-item" [class.active]="activeMenu === 'tableau'">
+      <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'candidats'">
+      <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'jurys'">
+      <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'sessions'">
+      <a (click)="setActiveMenu('sessions')">Sessions d'évaluation</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'calendrier'">
+      <a (click)="setActiveMenu('calendrier')">Calendrier</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'statistiques'">
+      <a (click)="setActiveMenu('statistiques')">Statistiques</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'parametres'">
+      <a (click)="setActiveMenu('parametres')">Paramètres</a>
+    </div>
+  </div>
+  
+  <div class="logout-btn-container">
+    <button class="logout-btn" (click)="authService.logout()">
+      Se déconnecter
+    </button>
+  </div>
+</div>
+    <!-- Nouvelle barre latérale pour candidat -->
+    <div class="sidebar" *ngIf="authService.isCandidat()">
+      <div class="sidebar-menu">
+        <div class="menu-item" [class.active]="activeMenu === 'tableau'">
+          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'profil'">
+          <a (click)="setActiveMenu('profil')">Mon profil</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'projet'">
+          <a (click)="setActiveMenu('projet')">Mon projet</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'planification'">
+          <a (click)="setActiveMenu('planification')">Planification</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'resultats'">
+          <a (click)="setActiveMenu('resultats')">Mes résultats</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'messages'">
+          <a (click)="setActiveMenu('messages')">Messages</a>
+        </div>
+      </div>
+      
+      <div class="logout-btn-container">
+        <button class="logout-btn" (click)="authService.logout()">
+          Se déconnecter
+        </button>
+      </div>
+    </div>
 
-  <!-- Contenu principal -->
-  <div *ngIf="authService.isJury()" class="main-content">
-    <!-- Vous pourrez ajouter ici le contenu qui change en fonction du menu sélectionné -->
-    <h1>Contenu du {{ activeMenu }}</h1>
-  </div>
-</div>
-</div>
-<footer class="mastering-footer">
-  <div class="footer-content">
-    <div class="footer-left">
-      <p>© 2025 MASTERING - Système d'Évaluation</p>
+    <!-- Contenu principal pour jury -->
+    <div *ngIf="authService.isJury()" class="main-content">
+      <h1>Contenu du {{ activeMenu }}</h1>
+      <app-evaluation></app-evaluation>
     </div>
-    <div class="footer-right">
-      <a >Politique de confidentialité</a>
-      <a >Mentions légales</a>
-      <a >Support</a>
+    
+    <!-- Contenu principal simplifié pour candidat -->
+    <div *ngIf="authService.isCandidat()" class="main-content">
+      <h1>{{ activeMenu | titlecase }}</h1>
+      <!-- Espace réservé pour le contenu spécifique à chaque page -->
+      <div [ngSwitch]="activeMenu">
+        <div *ngSwitchCase="'tableau'">
+          <!-- Placeholder pour le tableau de bord candidat -->
+          <p>Contenu du tableau de bord candidat</p>
+          <p *ngIf="authService.username">Bienvenue, {{ authService.username }}</p>
+        </div>
+        <div *ngSwitchCase="'profil'">
+          <!-- Placeholder pour la page de profil -->
+          <p>Contenu de la page profil</p>
+        </div>
+        <div *ngSwitchCase="'projet'">
+          <!-- Placeholder pour la page projet -->
+          <p>Contenu de la page projet</p>
+        </div>
+        <div *ngSwitchCase="'planification'">
+          <!-- Placeholder pour la page planification -->
+          <p>Contenu de la page planification</p>
+        </div>
+        <div *ngSwitchCase="'resultats'">
+          <!-- Placeholder pour la page résultats -->
+          <p>Contenu de la page résultats</p>
+        </div>
+        <div *ngSwitchCase="'messages'">
+          <!-- Placeholder pour la page messages -->
+          <p>Contenu de la page messages</p>
+        </div>
+      </div>
     </div>
   </div>
-</footer>
+  
+  <!-- Footer -->
+  <footer class="mastering-footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <p>© 2025 MASTERING - Système d'Évaluation</p>
+      </div>
+      <div class="footer-right">
+        <a>Politique de confidentialité</a>
+        <a>Mentions légales</a>
+        <a>Support</a>
+      </div>
+    </div>
+  </footer>
+</div>
