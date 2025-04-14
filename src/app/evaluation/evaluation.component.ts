@@ -29,6 +29,7 @@ export class EvaluationComponent implements OnInit {
 
   optionsDate = ['Toutes les dates', 'Aujourd\'hui', 'Cette semaine', 'Ce mois'];
   optionsStatut = ['Tout les statuts', 'Évalué', 'Non Évalué'];
+Math: Math = Math; // Pour utiliser Math dans le template
 
   constructor(private evaluationService: EvaluationService) {}
 
