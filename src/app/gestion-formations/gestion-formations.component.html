@@ -1,0 +1,33 @@
+<div class="table-container">
+    <h2>Liste des Formations</h2>
+    <div class="header-row">
+      <a (click)="goToAjout()" class="btn-add">+ Ajouter une formation</a>
+    </div>
+    <table class="formations-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Niveau</th>
+          <th>Code RNCP</th>
+          <th>Durée</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let formation of formations">
+          <td><strong>{{ formation.nom }}</strong></td>
+          <td>{{ formation.niveau }}</td>
+          <td>{{ formation.rncp }}</td>
+          <td>{{ formation.duree }}</td>
+          <td><span class="badge success">Active</span></td>
+          <td class="actions">
+            <button class="btn-view" (click)="voir(formation)">Voir</button>
+            <button class="btn-edit" (click)="modifier(formation)">Modifier</button>
+            <button class="btn-delete" (click)="supprimer(formation)">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

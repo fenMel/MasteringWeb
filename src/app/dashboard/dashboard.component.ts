@@ -5,17 +5,21 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 // Importez votre composant d'évaluation
 import { EvaluationComponent } from '../evaluation/evaluation.component';
+import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formation.component';
+import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent],
+  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent,  AjouterFormationComponent ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   activeMenu: string = 'tableau';
-  
+  sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
+
+
   constructor(public authService: AuthService) { }
   
   ngOnInit(): void {
@@ -36,9 +40,18 @@ export class DashboardComponent implements OnInit {
     }
   }
   
-  setActiveMenu(menu: string): void {
+
+  setActiveMenu = (menu: string) => {
     this.activeMenu = menu;
-  }
+    if (menu === 'ListeFormations') {
+      this.sousMenu = 'liste';
+    }
+  };
+
+  setSousMenu = (menu: string) => {
+    this.sousMenu = menu;
+  };
+  
   // Dans votre dashboard.component.ts
 getRoleTitle(): string {
   if (this.authService.isJury()) {

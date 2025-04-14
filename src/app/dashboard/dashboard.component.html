@@ -53,8 +53,8 @@
     <div class="menu-item" [class.active]="activeMenu === 'sessions'">
       <a (click)="setActiveMenu('sessions')">Sessions d'évaluation</a>
     </div>
-    <div class="menu-item" [class.active]="activeMenu === 'calendrier'">
-      <a (click)="setActiveMenu('calendrier')">Calendrier</a>
+    <div class="menu-item" [class.active]="activeMenu === 'Formation'">
+      <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
     </div>
     <div class="menu-item" [class.active]="activeMenu === 'statistiques'">
       <a (click)="setActiveMenu('statistiques')">Statistiques</a>
@@ -108,8 +108,24 @@
        </ng-container>
      
     </div>
+     <!-- Contenu principal pour coordinateur -->
     
-  
+     <div *ngIf="authService.isCoordinateur()" class="main-content">
+     <h1>Contenu du {{ activeMenu }}</h1>
+   
+     <ng-container *ngIf="activeMenu === 'ListeFormations'">
+       
+       <!-- Affiche le tableau -->
+       <app-gestion-formations
+         *ngIf="sousMenu === 'liste'"
+         [setSousMenu]="setSousMenu">
+       </app-gestion-formations>
+   
+       <!-- Affiche le formulaire d'ajout -->
+       <app-ajouter-formation *ngIf=" activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
+     </ng-container>
+   </div>   
+
     <!-- Contenu principal simplifié pour candidat -->
     <div *ngIf="authService.isCandidat()" class="main-content">
       <h1>{{ activeMenu | titlecase }}</h1>
