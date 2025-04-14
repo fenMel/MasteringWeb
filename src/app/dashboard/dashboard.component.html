@@ -19,7 +19,7 @@
           <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
-          <a (click)="setActiveMenu('soutenances')">Mes soutenances</a>
+          <a (click)="setActiveMenu('soutenances')">Mes soutenances </a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
           <a (click)="setActiveMenu('evaluations')">Évaluations récentes</a>
@@ -102,8 +102,11 @@
 
     <!-- Contenu principal pour jury -->
     <div *ngIf="authService.isJury()" class="main-content">
-      <h1>Contenu du {{ activeMenu }}</h1>
-      <app-evaluation></app-evaluation>
+    
+      <ng-container *ngIf="activeMenu === 'soutenances'">
+        <app-evaluation></app-evaluation>     
+       </ng-container>
+     
     </div>
      <!-- Contenu principal pour coordinateur -->
     
@@ -122,6 +125,7 @@
        <app-ajouter-formation *ngIf=" activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
      </ng-container>
    </div>   
+
     <!-- Contenu principal simplifié pour candidat -->
     <div *ngIf="authService.isCandidat()" class="main-content">
       <h1>{{ activeMenu | titlecase }}</h1>
