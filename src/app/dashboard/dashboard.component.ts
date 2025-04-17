@@ -7,12 +7,14 @@ import { AuthService } from '../services/auth.service';
 import { EvaluationComponent } from '../evaluation/evaluation.component';
 import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formation.component';
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
+import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent, AjouterFormationComponent, SessionsFormationComponent],
+
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
