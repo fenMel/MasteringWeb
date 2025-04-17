@@ -13,7 +13,7 @@ import { SessionsFormationComponent } from '../sessions-formation/sessions-forma
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent, AjouterFormationComponent, SessionsFormationComponent],
+  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent, AjouterFormationComponent, SessionsFormationComponent, AjouterEvaluationComponent],
 
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
