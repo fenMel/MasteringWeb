@@ -1,0 +1,45 @@
+<div class="container">
+  <h2>Sessions de formations</h2>
+
+  <div class="filters">
+    <label for="filter">Filtrer par :</label>
+    <select id="filter" [(ngModel)]="selectedFilter">
+      <option value="title">Titres</option>
+      <option value="description">Description</option>
+      <option value="formation">Formation</option>
+    </select>
+
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher une session ..." />
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Titres</th>
+        <th>Formation</th>
+        <th>Description</th>
+        <th>Début</th>
+        <th>Fin</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let session of filteredSessions()">
+        <td>{{ session.title }}</td>
+        <td>{{ session.formation }}</td>
+        <td >{{ session.description }}</td>
+        <td>{{ session.start }}</td>
+        <td>{{ session.end }}</td>
+        <td><button class="view-btn" (click)="voirSession(session)">Voir</button></td>
+        <td><button class="edit-btn" (click)="voirSession(session)">Modifier</button></td>
+
+      </tr>
+    </tbody>
+  </table>
+  
+  <div class="add-btn-container">
+    <button class="add-btn">+ Ajouter une session</button>
+  </div>
+
+  <p class="footer-note">Affichage des sessions de formations</p>
+</div>

@@ -7,11 +7,12 @@ import { AuthService } from '../services/auth.service';
 import { EvaluationComponent } from '../evaluation/evaluation.component';
 import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formation.component';
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
+import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent,  AjouterFormationComponent ],
+  imports: [CommonModule, FormsModule, RouterModule, EvaluationComponent, GestionFormationsComponent, AjouterFormationComponent, SessionsFormationComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -46,12 +47,18 @@ export class DashboardComponent implements OnInit {
     if (menu === 'ListeFormations') {
       this.sousMenu = 'liste';
     }
+    this.activeMenu = menu;
+    if (menu === 'ListeSessionsFormation') {
+      this.sousMenu = 'liste';
+    }
   };
 
   setSousMenu = (menu: string) => {
     this.sousMenu = menu;
   };
   
+
+ 
   // Dans votre dashboard.component.ts
 getRoleTitle(): string {
   if (this.authService.isJury()) {
