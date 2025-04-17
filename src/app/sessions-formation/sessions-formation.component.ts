@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SessionsFormationService } from '../services/sessions-formation.service';
 
 @Component({
   selector: 'app-sessions-formation',
@@ -13,8 +14,21 @@ export class SessionsFormationComponent {
   @Input() setSousMenu!: (menu: string) => void;
   selectedFilter: string = 'title';
   searchTerm: string = '';
+  sessions: any[] = [];
+  constructor(private sessionFormationService: SessionsFormationService) {}
 
-  sessions = [
+  ngOnInit() {
+    this.sessionFormationService.getSessionsFormation().subscribe({
+      next: (data) => {
+        this.sessions = data;
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération des sessions de formation:', error);
+      }
+    });
+  }
+
+ /* sessions = [
     {
       title: 'Java Avancé',
       formation: 'Développement',
@@ -44,7 +58,7 @@ export class SessionsFormationComponent {
       end: '2025-05-15'
     }
     // Tu peux en ajouter d'autres ici
-  ];
+  ];*/
 authService: any;
 activeMenu: any;
 
