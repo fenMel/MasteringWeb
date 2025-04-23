@@ -3,15 +3,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evaluation } from '../evaluation/evaluation.model';
+import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EvaluationService {
-  private baseUrl = 'http://localhost:8080/api/evaluations'; // URL de votre API Spring Boot
-  private apiUrl = 'http://localhost:8080/api'; // URL de base pour les autres endpoints
+  constructor(private authService: AuthService, private http: HttpClient) { }
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
 
   // Méthodes existantes
   getAllEvaluations(): Observable<Evaluation[]> {
