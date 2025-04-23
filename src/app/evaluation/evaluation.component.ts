@@ -43,12 +43,44 @@ Math: Math = Math; // Pour utiliser Math dans le template
       this.filtres.statut,
       this.filtres.candidat
     ).subscribe(
-      (data: Evaluation[]) => {
-        this.evaluations = data;
-        this.totalEvaluations = data.length;
+      (data: any[]) => {
+        console.log('Données d\'évaluations reçues:', data);
+        
+        // Extraire tous les IDs de candidats uniques
+        const candidatIds = [...new Set(data.map(evaluation => evaluation.candidatId))];
+        
+        if (candidatIds.length > 0) {
+          // Récupérer les informations pour tous les candidats
+          this.evaluationService.getCandidatsParIds(candidatIds).subscribe(
+            (candidats: any[]) => {
+              console.log('Données de candidats reçues:', candidats);
+              
+              // Mapper les évaluations avec les informations des candidats
+              this.evaluations = data.map(evaluation => {
+                const candidatInfo = candidats.find(c => c.id === evaluation.candidatId);
+                
+                return {
+                  id: evaluation.id,
+                  candidat: candidatInfo ? candidatInfo.nom + ' ' + candidatInfo.prenom : 'Candidat #' + evaluation.candidatId,
+                  sujet: candidatInfo ? candidatInfo.sujet : 'Sujet non spécifié',
+                  dateHeure: candidatInfo ? new Date(candidatInfo.dateSoutenance) : new Date(),
+                  statut: evaluation.moyenne ? 'Évalué' : 'Non Évalué'
+                };
+              });
+              
+              this.totalEvaluations = this.evaluations.length;
+            },
+            error => {
+              console.error('Erreur lors de la récupération des candidats:', error);
+            }
+          );
+        } else {
+          this.evaluations = [];
+          this.totalEvaluations = 0;
+        }
       },
       error => {
-        console.error('Erreur lors du chargement des évaluations', error);
+        console.error('Erreur lors du chargement des évaluations:', error);
       }
     );
   }
