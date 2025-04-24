@@ -9,6 +9,7 @@ import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formatio
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
 import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
+import { ActivatedRoute } from '@angular/router'; 
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,8 @@ export class DashboardComponent implements OnInit {
   sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
 
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService  , private route: ActivatedRoute 
+  ) { }
   
   ngOnInit(): void {
     // S'assurer que le token est décodé pour accéder aux rôles et au nom d'utilisateur
@@ -41,6 +43,20 @@ export class DashboardComponent implements OnInit {
     if (!this.authService.isConnected()) {
       console.log("L'utilisateur n'est pas connecté, redirection en cours...");
     }
+    // Autres initialisations si nécessaire
+    // Récupérer les paramètres de la route pour définir le menu actif et le sous-menu
+    this.route.queryParams.subscribe(params => {
+      if (params['menu']) {
+        this.activeMenu = params['menu'];
+        console.log("Menu actif (via URL) :", this.activeMenu);
+      }
+      // Vérifiez si le sous-menu est spécifié dans les paramètres de la requête
+      // et mettez à jour le sous-menu en conséquence
+      if (params['sousMenu']) {
+        this.sousMenu = params['sousMenu'];
+        console.log("Sous-menu actif (via URL) :", this.sousMenu);
+      }
+    });
   }
   
 

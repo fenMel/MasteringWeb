@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { Evaluation, FiltresEvaluation } from './evaluation.model';
 import { EvaluationService } from '../services/evaluation.service';
@@ -30,8 +31,12 @@ export class EvaluationComponent implements OnInit {
   optionsDate = ['Toutes les dates', 'Aujourd\'hui', 'Cette semaine', 'Ce mois'];
   optionsStatut = ['Tout les statuts', 'Évalué', 'Non Évalué'];
 Math: Math = Math; // Pour utiliser Math dans le template
+  
 
-  constructor(private evaluationService: EvaluationService) {}
+  constructor(private evaluationService: EvaluationService , private router: Router) {
+    console.log('Router:', this.router);  // Ajoute ce log
+
+  }
 
   ngOnInit(): void {
     this.chargerEvaluations();
@@ -124,4 +129,16 @@ Math: Math = Math; // Pour utiliser Math dans le template
     this.filtres.candidat = '';
     this.appliquerFiltres();
   }
+  voirEvaluation(evaluation: any): void {
+    console.log('Evaluation:', evaluation);  // Ajoute un console.log ici
+    if (evaluation && evaluation.id) {
+      this.router.navigate(['/ajouter-evaluation'], {
+        queryParams: { id: evaluation.id }
+      });
+    } else {
+      console.error('L\'évaluation ne contient pas d\'ID valide');
+    }
+  }
+  
+  
 }

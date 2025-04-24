@@ -125,14 +125,15 @@ export class AjouterEvaluationComponent implements OnInit {
   annuler(): void {
     // Redirection vers la liste des évaluations ou nettoyage du formulaire
     if (confirm('Êtes-vous sûr de vouloir annuler cette évaluation?')) {
-      this.router.navigate(['/evaluations']);
+      this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
     }
   }
   
   retourListe(): void {
-    // Navigation vers la liste des évaluations
-    this.router.navigate(['/evaluations']);
+    // Redirection vers le tableau de bord et vers la section "soutenances"
+    this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
   }
+  
 
   validerEvaluation(): void {
     if (this.evaluationForm.valid) {
@@ -166,4 +167,5 @@ export class AjouterEvaluationComponent implements OnInit {
       alert('Veuillez remplir correctement tous les champs obligatoires.');
     }
   }
+  
 }
