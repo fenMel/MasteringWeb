@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ export class EvaluationComponent implements OnInit {
   totalEvaluations: number = 0;
   pageActuelle: number = 1;
   evaluationsParPage: number = 5;
-
+  @Input() setSousMenu!: (menu: string) => void;
   filtres: FiltresEvaluation = {
     dateRange: 'Toutes les dates',
     statut: 'Tout les statuts', 
@@ -130,15 +130,24 @@ Math: Math = Math; // Pour utiliser Math dans le template
     this.appliquerFiltres();
   }
   voirEvaluation(evaluation: any): void {
-    console.log('Evaluation:', evaluation);  // Ajoute un console.log ici
+    console.log('Evaluation:', evaluation);
+    
     if (evaluation && evaluation.id) {
-      this.router.navigate(['/ajouter-evaluation'], {
-        queryParams: { id: evaluation.id }
+      // utilisez le système de menu du dashboard
+      this.setSousMenu('ajouter-evaluation');
+      
+      // Vous pouvez stocker l'ID d'évaluation dans un service
+      // ou le passer via des paramètres de route
+      this.router.navigate(['/dashboard'], {
+        queryParams: { 
+          menu: 'soutenances',
+          sousMenu: 'ajouter-evaluation', 
+          id: evaluation.id 
+        }
       });
     } else {
       console.error('L\'évaluation ne contient pas d\'ID valide');
     }
   }
-  
   
 }

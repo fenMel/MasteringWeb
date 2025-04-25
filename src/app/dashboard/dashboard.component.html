@@ -107,16 +107,22 @@
     <div *ngIf="authService.isJury()" class="main-content">
     
       <ng-container *ngIf="activeMenu === 'soutenances'">
-        <app-evaluation></app-evaluation>    
         
-        
-        <app-ajouter-formation *ngIf=" activeMenu === 'soutenances' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
+          <!-- Liste des évaluations -->
+          <app-evaluation
+            *ngIf="sousMenu === 'liste'"
+            [setSousMenu]="setSousMenu">
+          </app-evaluation>
+          
+          <!-- Formulaire d'ajout d'évaluation -->
+          <app-ajouter-evaluation
+            *ngIf="sousMenu === 'ajouter-evaluation'"
+            [setSousMenu]="setSousMenu">
+          </app-ajouter-evaluation>
+        </ng-container>
+   
 
-       </ng-container>
-       <!-- <ng-container *ngIf="activeMenu === 'evaluations'">
-        <app-ajouter-evaluation> </app-ajouter-evaluation> -->
-
-       <!-- </ng-container> -->
+       
     </div>
      <!-- Contenu principal pour coordinateur -->
     
@@ -134,12 +140,8 @@
        <!-- Affiche le formulaire d'ajout -->
        <app-ajouter-formation *ngIf=" activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
      </ng-container>
-   </div>   
+     
 
-   
-   <div *ngIf="authService.isCoordinateur()" class="main-content">
-    <h1>Contenu du {{ activeMenu }}</h1>
-  
     <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
       
       <!-- Affiche le tableau -->
