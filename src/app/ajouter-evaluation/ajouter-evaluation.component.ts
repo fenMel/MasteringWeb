@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EvaluationService } from '../services/evaluation.service';
+import { Input } from '@angular/core';
 
 interface Critere {
   id: number;
@@ -38,7 +39,8 @@ export class AjouterEvaluationComponent implements OnInit {
       commentaires: [''],
     });
   }
-
+  @Input() setSousMenu!: (val: string) => void; // Permet de passer une fonction pour changer de sous-menu
+ 
   ngOnInit(): void {
     // Récupérer l'ID du candidat depuis l'URL si disponible
     this.route.params.subscribe(params => {
@@ -70,6 +72,12 @@ export class AjouterEvaluationComponent implements OnInit {
       }
     });
   }
+  goToAjout() {
+      if (this.setSousMenu) {
+        this.setSousMenu('ajouter');
+        console.log('Clique détecté !');
+      }
+    }
   
   private chargerCriteres(): void {
     this.evaluationService.getCriteres().subscribe({
@@ -125,14 +133,20 @@ export class AjouterEvaluationComponent implements OnInit {
   annuler(): void {
     // Redirection vers la liste des évaluations ou nettoyage du formulaire
     if (confirm('Êtes-vous sûr de vouloir annuler cette évaluation?')) {
-      this.router.navigate(['/evaluations']);
+      this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
     }
   }
   
   retourListe(): void {
-    // Navigation vers la liste des évaluations
-    this.router.navigate(['/evaluations']);
+    // Si setSousMenu est disponible, utilisez-le (cas dans le dashboard)
+    if (this.setSousMenu) {
+      this.setSousMenu('liste');
+    } else {
+      // Sinon, utilisez la navigation router (cas de navigation indépendante)
+      this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
+    }
   }
+  
 
   validerEvaluation(): void {
     if (this.evaluationForm.valid) {
@@ -166,4 +180,5 @@ export class AjouterEvaluationComponent implements OnInit {
       alert('Veuillez remplir correctement tous les champs obligatoires.');
     }
   }
+  
 }

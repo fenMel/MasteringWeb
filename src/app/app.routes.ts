@@ -6,6 +6,7 @@ import { EvaluationComponent } from './evaluation/evaluation.component';
 import { AjouterFormationComponent } from './ajouter-formation/ajouter-formation.component';
 import { GestionFormationsComponent } from './gestion-formations/gestion-formations.component';
 import { SessionsFormationComponent } from './sessions-formation/sessions-formation.component';
+import { AjouterEvaluationComponent } from './ajouter-evaluation/ajouter-evaluation.component';
 
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
     { path: 'gestion-formations', component: GestionFormationsComponent },
 
     { path: 'ajouter-formation', component: AjouterFormationComponent },
+    { path: 'ajouter-evaluation', component: AjouterEvaluationComponent }, 
 
     { path: 'sessions-formation', component: SessionsFormationComponent }
         // autres routes...
