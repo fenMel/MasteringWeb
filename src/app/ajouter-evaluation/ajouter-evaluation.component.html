@@ -1,80 +1,155 @@
 <div class="evaluation-container">
-    <!-- Affichage du chargement -->
-    <div *ngIf="loading" class="loading-indicator">
-      <p>Chargement des données...</p>
-    </div>
-  
-    <!-- Affichage des erreurs -->
-    <div *ngIf="error" class="error-container">
-      <p class="error-message">{{ error }}</p>
-      <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
-    </div>
-  
-    <!-- Contenu principal (visible seulement si données chargées et pas d'erreur) -->
-    <div *ngIf="!loading && !error">
-      <div class="candidate-card">
-        <h2>Candidat: {{ candidat.nom }}</h2>
-        <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
-        <p><strong>Date et heure:</strong> {{ candidat.date }} - {{ candidat.heure }} | <strong>Salle:</strong> {{ candidat.salle }}</p>
-      </div>
-  
-      <h2 class="evaluation-title">Grille d'évaluation</h2>
-  
-      <form [formGroup]="evaluationForm" (ngSubmit)="validerEvaluation()">
-        <div class="evaluation-grid">
-          <div class="grid-header">
-            <div class="cell header">Critère</div>
-            <div class="cell header coefficient">Coefficient</div>
-            <div class="cell header note">Note /20</div>
-            <div class="cell header contribution">Contribution</div>
-          </div>
-  
-          <ng-container *ngFor="let critere of criteres">
-            <div class="grid-row">
-              <div class="cell critere">
-                <div class="critere-nom">{{ critere.nom }}</div>
-                <div class="critere-description">{{ critere.description }}</div>
-              </div>
-              <div class="cell coefficient">{{ critere.coefficient }}</div>
-              <div class="cell note">
-                <input 
-                  type="number" 
-                  [formControlName]="'note_' + critere.id" 
-                  min="0" 
-                  max="20" 
-                  (input)="mettreAJourNote()"
-                  class="note-input">
-                <div *ngIf="evaluationForm.get('note_' + critere.id)?.touched && evaluationForm.get('note_' + critere.id)?.invalid" class="error-message">
-                  Note requise (0-20)
-                </div>
-              </div>
-              <div class="cell contribution">
-                {{ calculerContribution(critere) }}
-              </div>
-            </div>
-          </ng-container>
-  
-          <div class="commentaires-section">
-            <h3>Commentaires</h3>
-            <textarea 
-              formControlName="commentaires" 
-              placeholder="Ajouter vos commentaires qualitatifs ici..." 
-              rows="5" 
-              class="commentaires-textarea"></textarea>
-          </div>
-        </div>
-  
-        <div class="note-finale-section">
-          <div class="note-finale">
-            <span>Note finale : </span>
-            <span class="note-value">{{ noteFinale }}/20</span>
-          </div>
-          
-          <div class="action-buttons">
-            <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
-            <button type="submit" class="btn btn-valider">Valider l'évaluation</button>
-          </div>
-        </div>
-      </form>
-    </div>
+  <!-- Affichage du chargement -->
+  <div *ngIf="loading" class="loading-indicator">
+    <p>Chargement des données...</p>
   </div>
+  
+  <!-- Affichage des erreurs -->
+  <div *ngIf="error" class="error-container">
+    <p class="error-message">{{ error }}</p>
+    <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
+  </div>
+  
+  <!-- Contenu principal (visible seulement si données chargées et pas d'erreur) -->
+  <div *ngIf="!loading && !error">
+    <div class="candidate-card">
+      <h2>Candidat: {{ candidat.nom }} {{ candidat.prenom }}</h2>
+      <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
+      <p><strong>Date et heure:</strong> {{ candidat.dateSoutenance | date:'dd/MM/yyyy' }} | <strong>Salle:</strong> {{ candidat.salle }}</p>
+      <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
+
+    </div>
+    
+    <h2 class="evaluation-title">Grille d'évaluation</h2>
+    
+    <form [formGroup]="evaluationForm" (ngSubmit)="validerEvaluation()">
+      <div class="evaluation-grid">
+        <div class="grid-header">
+          <div class="cell header">Critère</div>
+          <div class="cell header note">Note /20</div>
+        </div>
+        
+        <!-- Clarté -->
+        <div class="grid-row">
+          <div class="cell critere">
+            <div class="critere-nom">Clarté</div>
+            <div class="critere-description">Clarté et structure de la présentation</div>
+          </div>
+          <div class="cell note">
+            <input
+              type="number"
+              formControlName="note_clarte"
+              min="0"
+              max="20"
+              (input)="mettreAJourNote()"
+              class="note-input">
+            <div *ngIf="evaluationForm.get('note_clarte')?.touched && evaluationForm.get('note_clarte')?.invalid" class="error-message">
+              Note requise (0-20)
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contenu -->
+        <div class="grid-row">
+          <div class="cell critere">
+            <div class="critere-nom">Contenu</div>
+            <div class="critere-description">Qualité et pertinence du contenu</div>
+          </div>
+          <div class="cell note">
+            <input
+              type="number"
+              formControlName="note_contenu"
+              min="0"
+              max="20"
+              (input)="mettreAJourNote()"
+              class="note-input">
+            <div *ngIf="evaluationForm.get('note_contenu')?.touched && evaluationForm.get('note_contenu')?.invalid" class="error-message">
+              Note requise (0-20)
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pertinence -->
+        <div class="grid-row">
+          <div class="cell critere">
+            <div class="critere-nom">Pertinence</div>
+            <div class="critere-description">Pertinence du sujet et des exemples</div>
+          </div>
+          <div class="cell note">
+            <input
+              type="number"
+              formControlName="note_pertinence"
+              min="0"
+              max="20"
+              (input)="mettreAJourNote()"
+              class="note-input">
+            <div *ngIf="evaluationForm.get('note_pertinence')?.touched && evaluationForm.get('note_pertinence')?.invalid" class="error-message">
+              Note requise (0-20)
+            </div>
+          </div>
+        </div>
+        
+        <!-- Présentation -->
+        <div class="grid-row">
+          <div class="cell critere">
+            <div class="critere-nom">Présentation</div>
+            <div class="critere-description">Qualité de la présentation visuelle</div>
+          </div>
+          <div class="cell note">
+            <input
+              type="number"
+              formControlName="note_presentation"
+              min="0"
+              max="20"
+              (input)="mettreAJourNote()"
+              class="note-input">
+            <div *ngIf="evaluationForm.get('note_presentation')?.touched && evaluationForm.get('note_presentation')?.invalid" class="error-message">
+              Note requise (0-20)
+            </div>
+          </div>
+        </div>
+        
+        <!-- Réponses -->
+        <div class="grid-row">
+          <div class="cell critere">
+            <div class="critere-nom">Réponses</div>
+            <div class="critere-description">Qualité des réponses aux questions</div>
+          </div>
+          <div class="cell note">
+            <input
+              type="number"
+              formControlName="note_reponses"
+              min="0"
+              max="20"
+              (input)="mettreAJourNote()"
+              class="note-input">
+            <div *ngIf="evaluationForm.get('note_reponses')?.touched && evaluationForm.get('note_reponses')?.invalid" class="error-message">
+              Note requise (0-20)
+            </div>
+          </div>
+        </div>
+        
+        <div class="commentaires-section">
+          <h3>Commentaires</h3>
+          <textarea
+            formControlName="commentaire"
+            placeholder="Ajouter vos commentaires qualitatifs ici..."
+            rows="5"
+            class="commentaires-textarea"></textarea>
+        </div>
+      </div>
+      
+      <div class="note-finale-section">
+        <div class="note-finale">
+          <span>Note finale : </span>
+          <span class="note-value">{{ noteFinale }}/20</span>
+        </div>
+        
+        <div class="action-buttons">
+          <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
+          <button type="submit" class="btn btn-valider">Valider l'évaluation</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

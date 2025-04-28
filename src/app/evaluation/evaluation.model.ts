@@ -5,7 +5,7 @@ export interface Evaluation {
     sujet: string;
     dateHeure: Date;
     statut: 'Non Évalué' | 'Évalué';
-    // Autres champs au besoin
+    candidatId: number;
   }
   export interface FiltresEvaluation {
     dateRange: string;

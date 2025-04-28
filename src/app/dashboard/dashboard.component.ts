@@ -9,6 +9,8 @@ import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formatio
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
 import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
+import { EvaluationService } from '../services/evaluation.service'; 
+
 import { ActivatedRoute } from '@angular/router'; 
 
 @Component({
@@ -34,7 +36,9 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private evaluationService: EvaluationService
+
   ) { }
   
   ngOnInit(): void {
@@ -74,6 +78,17 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+  evaluer(evaluation: any) {
+    console.log('Évaluer cette évaluation:', evaluation);
+  
+    this.evaluationService.setSelectedEvaluationId(evaluation.id);
+    this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
+  
+    this.activeMenu = 'soutenances';
+    this.sousMenu = 'ajouter-evaluation';
+  }
+  
+  
   
   setActiveMenu = (menu: string): void => {
     this.activeMenu = menu;
