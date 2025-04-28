@@ -1,40 +1,77 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { GestionFormationService, Formation } from '../services/gestion-formation.service';
+import { Input } from '@angular/core';
 
 @Component({
-  standalone: true,
   selector: 'app-gestion-formations',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './gestion-formations.component.html',
-  styleUrls: ['./gestion-formations.component.scss']
+  styleUrls: ['./gestion-formations.component.scss'] // ✅ bon
 })
-export class GestionFormationsComponent {
-  @Input() setSousMenu!: (menu: string) => void;
 
-  formations = [
-    { nom: 'Master IA & Big Data', niveau: 'Bac +5', rncp: 'RNCP34512', duree: '2 ans' },
-    { nom: 'Master Cloud Computing', niveau: 'Bac +5', rncp: 'RNCP34987', duree: '2 ans' },
-    { nom: 'Master Cybersécurité', niveau: 'Bac +5', rncp: 'RNCP35678', duree: '2 ans' },
-    { nom: 'Master Data Science', niveau: 'Bac +5', rncp: 'RNCP31234', duree: '2 ans' },
-    { nom: 'Master Gestion de Projet IT', niveau: 'Bac +5', rncp: 'RNCP36790', duree: '2 ans' },
-  ];
 
+export class GestionFormationsComponent implements OnInit {
+  @Input() setSousMenu: any;
+  
+  formations: Formation[] = [];
+  formationSelectionnee: Formation | null = null;
+  searchText: string = '';
+
+  constructor(private formationService: GestionFormationService) {}
+
+  ngOnInit(): void {
+    this.chargerFormations();
+  }
+
+  chargerFormations() {
+    this.formationService.getFormations().subscribe((data) => {
+      this.formations = data;
+    });
+  }
+
+  ajouterFormation() {
+    if (this.formationSelectionnee) {
+      this.formationService.ajouterFormation(this.formationSelectionnee).subscribe(() => {
+        this.chargerFormations();
+        this.formationSelectionnee = null;
+      });
+    }
+  }
+
+  modifierFormation() {
+    if (this.formationSelectionnee && this.formationSelectionnee.id) {
+      this.formationService.modifierFormation(this.formationSelectionnee.id, this.formationSelectionnee).subscribe(() => {
+        this.chargerFormations();
+        this.formationSelectionnee = null;
+      });
+    }
+  }
+
+  supprimerFormation(id?: number) {
+    if (id && confirm('Voulez-vous vraiment supprimer cette formation ?')) {
+      this.formationService.supprimerFormation(id).subscribe(() => {
+        this.chargerFormations();
+      });
+    }
+  }
+
+  selectionnerFormation(formation: Formation) {
+    this.formationSelectionnee = { ...formation };
+  }
+
+  filtrerFormations(): Formation[] {
+    return this.formations.filter(f =>
+      f.nom.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
   goToAjout() {
     if (this.setSousMenu) {
       this.setSousMenu('ajouter');
       console.log('Clique détecté !');
     }
-  }
-
-  voir(formation: any) {
-    console.log('Voir formation :', formation);
-  }
-
-  modifier(formation: any) {
-    console.log('Modifier formation :', formation);
-  }
-
-  supprimer(formation: any) {
-    console.log('Supprimer formation :', formation);
   }
 }

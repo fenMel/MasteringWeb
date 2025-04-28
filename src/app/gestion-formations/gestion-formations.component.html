@@ -1,8 +1,15 @@
-<div class="table-container">
-    <h2>Liste des Formations</h2>
-    <div class="header-row">
+<div class="container mt-4">
+
+  <!-- En-tête avec bouton ajouter + recherche -->
+  <div class="header-row">
+    <div class="actions">
       <a (click)="goToAjout()" class="btn-add">+ Ajouter une formation</a>
+      <input type="text" [(ngModel)]="searchText" placeholder="Rechercher une formation..." class="search-input" name="recherche" />
     </div>
+  </div>
+
+  <!-- Tableau des formations -->
+  <div class="table-container mt-4">
     <table class="formations-table">
       <thead>
         <tr>
@@ -10,24 +17,53 @@
           <th>Niveau</th>
           <th>Code RNCP</th>
           <th>Durée</th>
-          <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let formation of formations">
-          <td><strong>{{ formation.nom }}</strong></td>
+        <tr *ngFor="let formation of filtrerFormations()">
+          <td>{{ formation.nom }}</td>
           <td>{{ formation.niveau }}</td>
-          <td>{{ formation.rncp }}</td>
+          <td>{{ formation.codeRncp }}</td>
           <td>{{ formation.duree }}</td>
-          <td><span class="badge success">Active</span></td>
-          <td class="actions">
-            <button class="btn-view" (click)="voir(formation)">Voir</button>
-            <button class="btn-edit" (click)="modifier(formation)">Modifier</button>
-            <button class="btn-delete" (click)="supprimer(formation)">✕</button>
+          <td class="action-buttons">
+            <button class="btn btn-view" (click)="selectionnerFormation(formation)">Modifier</button>
+            <button class="btn btn-delete" (click)="supprimerFormation(formation.id)">✕</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  
+
+  <!-- Formulaire d'ajout / modification -->
+  <div *ngIf="formationSelectionnee" class="formulaire mt-5">
+    <h2 class="mb-3">{{ formationSelectionnee.id ? 'Modifier' : 'Ajouter' }} une Formation</h2>
+
+    <form ngForm (ngSubmit)="formationSelectionnee.id ? modifierFormation() : ajouterFormation()">
+      <div class="form-group">
+        <input type="text" [(ngModel)]="formationSelectionnee.nom" name="nom" placeholder="Nom de la formation" required />
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="formationSelectionnee.niveau" name="niveau" placeholder="Niveau" required />
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="formationSelectionnee.codeRncp" name="codeRncp" placeholder="Code RNCP" />
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="formationSelectionnee.duree" name="duree" placeholder="Durée" required />
+      </div>
+      <div class="form-group">
+        <textarea [(ngModel)]="formationSelectionnee.prerequis" name="prerequis" placeholder="Pré-requis"></textarea>
+      </div>
+      <div class="form-group">
+        <textarea [(ngModel)]="formationSelectionnee.description" name="description" placeholder="Description détaillée"></textarea>
+      </div>
+      <div class="form-group">
+        <textarea [(ngModel)]="formationSelectionnee.objectifs" name="objectifs" placeholder="Objectifs pédagogiques"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">{{ formationSelectionnee.id ? 'Modifier' : 'Ajouter' }}</button>
+    </form>
+  </div>
+
+</div>
