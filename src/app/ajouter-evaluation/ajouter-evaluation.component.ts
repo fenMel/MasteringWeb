@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EvaluationService } from '../services/evaluation.service';
-import { Input } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
 interface Critere {
   id: number;
@@ -26,104 +26,137 @@ export class AjouterEvaluationComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   noteFinale: number = 0;
+  evaluationId!: number;
   candidatId!: number;
+
+  @Input() setSousMenu!: (val: string) => void;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private evaluationService: EvaluationService
+    private evaluationService: EvaluationService,
+    private authService: AuthService
   ) {
-    // Initialisation du formulaire avec seulement le champ commentaires
+    // Créer directement les contrôles pour chaque note
     this.evaluationForm = this.fb.group({
-      commentaires: [''],
-    });
-  }
-  @Input() setSousMenu!: (val: string) => void; // Permet de passer une fonction pour changer de sous-menu
- 
-  ngOnInit(): void {
-    // Récupérer l'ID du candidat depuis l'URL si disponible
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.candidatId = +params['id'];
-        this.chargerDonnees(this.candidatId);
-      } else {
-        this.error = "Aucun candidat spécifié";
-        this.loading = false;
-      }
-    });
-  }
-  
-  private chargerDonnees(candidatId: number): void {
-    this.loading = true;
-    
-    // Charger les informations du candidat
-    this.evaluationService.getCandidat(candidatId).subscribe({
-      next: (data: any) => {
-        this.candidat = data;
-        
-        // Après avoir chargé le candidat, charger les critères d'évaluation
-        this.chargerCriteres();
-      },
-      error: (error: any) => {
-        console.error('Erreur lors du chargement du candidat:', error);
-        this.error = "Impossible de charger les informations du candidat";
-        this.loading = false;
-      }
-    });
-  }
-  goToAjout() {
-      if (this.setSousMenu) {
-        this.setSousMenu('ajouter');
-        console.log('Clique détecté !');
-      }
-    }
-  
-  private chargerCriteres(): void {
-    this.evaluationService.getCriteres().subscribe({
-      next: (data: any) => {
-        this.criteres = data;
-        
-        // Ajout dynamique des contrôles de formulaire pour chaque critère après le chargement
-        this.criteres.forEach(critere => {
-          this.evaluationForm.addControl(
-            `note_${critere.id}`, 
-            this.fb.control('', [Validators.required, Validators.min(0), Validators.max(20)])
-          );
-        });
-        
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Erreur lors du chargement des critères:', error);
-        this.error = "Impossible de charger les critères d'évaluation";
-        this.loading = false;
-      }
+      note_clarte: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
+      note_contenu: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
+      note_pertinence: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
+      note_presentation: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
+      note_reponses: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
+      commentaire: ['']
     });
   }
 
-  calculerContribution(critere: Critere): number {
-    const noteControl = this.evaluationForm.get(`note_${critere.id}`);
-    if (noteControl && noteControl.valid) {
-      const note = noteControl.value;
-      return parseFloat((note * critere.coefficient).toFixed(1));
+  ngOnInit(): void {
+    const selectedEvaluationId = this.evaluationService.getSelectedEvaluationId();
+    const selectedCandidatId = this.evaluationService.getSelectedCandidatId();
+    const viewMode = this.evaluationService.getViewMode();
+
+    if (selectedEvaluationId && selectedCandidatId) {
+      this.evaluationId = selectedEvaluationId;
+      this.candidatId = selectedCandidatId;
+
+      if (viewMode) {
+        this.evaluationForm.disable();
+      }
+
+      this.chargerDonnees(this.candidatId);
+     
+    } else {
+      // Cas navigation directe via URL
+      this.route.params.subscribe(params => {
+        if (params['id']) {
+          this.evaluationId = +params['id'];
+          this.evaluationService.getEvaluation(this.evaluationId).subscribe({
+            next: (evaluation: any) => {
+              this.candidatId = evaluation.candidatId;
+              this.chargerDonnees(this.candidatId);
+            },
+            error: () => {
+              this.error = "Impossible de charger l'évaluation.";
+              this.loading = false;
+            }
+          });
+        } else {
+          this.error = "Aucun ID fourni.";
+          this.loading = false;
+        }
+      });
     }
-    return 0;
+  }
+
+  private chargerDonnees(candidatId: number): void {
+    this.loading = true;
+  
+    // Récupérer les informations du candidat
+    this.evaluationService.getCandidatId(candidatId).subscribe({
+      next: (candidatData: any) => {
+        this.candidat = candidatData;
+        
+        // Si on a un ID d'évaluation, charger les données d'évaluation
+        if (this.evaluationId) {
+          this.evaluationService.getEvaluation(this.evaluationId).subscribe({
+            next: (evaluationData: any) => {
+              console.log("Données d'évaluation reçues:", evaluationData);
+
+              // Remplir le formulaire avec les valeurs existantes
+              this.evaluationForm.patchValue({
+                note_clarte: evaluationData.noteClarte,
+                note_contenu: evaluationData.noteContenu,
+                note_pertinence: evaluationData.notePertinence,
+                note_presentation: evaluationData.notePresentation,
+                note_reponses: evaluationData.noteReponses,
+                commentaire: evaluationData.commentaire
+              });
+              
+              this.calculerNoteFinale();
+              this.loading = false;
+              this.evaluationService.resetSelection();
+            },
+            error: (err) => {
+              console.warn("Pas d'évaluation existante pour ce candidat:", err);
+              this.loading = false;
+              this.evaluationService.resetSelection();
+            }
+          });
+        } else {
+          this.loading = false;
+        }
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement du candidat:", err);
+        this.error = "Impossible de charger les informations du candidat.";
+        this.loading = false;
+      }
+    });
+  }
+  
+
+  goToAjout(): void {
+    if (this.setSousMenu) {
+      this.setSousMenu('ajouter');
+    }
   }
 
   calculerNoteFinale(): void {
-    let somme = 0;
-    let coefficientTotal = 0;
+    const notes = [
+      this.evaluationForm.get('note_clarte')?.value || 0,
+      this.evaluationForm.get('note_contenu')?.value || 0,
+      this.evaluationForm.get('note_pertinence')?.value || 0,
+      this.evaluationForm.get('note_presentation')?.value || 0,
+      this.evaluationForm.get('note_reponses')?.value || 0
+    ];
     
-    this.criteres.forEach(critere => {
-      const noteControl = this.evaluationForm.get(`note_${critere.id}`);
-      if (noteControl && noteControl.valid) {
-        somme += noteControl.value * critere.coefficient;
-        coefficientTotal += critere.coefficient;
-      }
-    });
+    const notesValides = notes.filter(note => note > 0);
     
-    this.noteFinale = coefficientTotal > 0 ? parseFloat((somme / coefficientTotal).toFixed(1)) : 0;
+    if (notesValides.length > 0) {
+      const somme = notesValides.reduce((a, b) => a + b, 0);
+      this.noteFinale = parseFloat((somme / notesValides.length).toFixed(1));
+    } else {
+      this.noteFinale = 0;
+    }
   }
 
   mettreAJourNote(): void {
@@ -131,53 +164,74 @@ export class AjouterEvaluationComponent implements OnInit {
   }
 
   annuler(): void {
-    // Redirection vers la liste des évaluations ou nettoyage du formulaire
-    if (confirm('Êtes-vous sûr de vouloir annuler cette évaluation?')) {
+    if (confirm('Êtes-vous sûr de vouloir annuler cette évaluation ?')) {
       this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
     }
   }
-  
+
   retourListe(): void {
-    // Si setSousMenu est disponible, utilisez-le (cas dans le dashboard)
     if (this.setSousMenu) {
       this.setSousMenu('liste');
     } else {
-      // Sinon, utilisez la navigation router (cas de navigation indépendante)
       this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
     }
   }
-  
 
   validerEvaluation(): void {
     if (this.evaluationForm.valid) {
-      // Préparation des données pour l'envoi au backend
+      const formValues = this.evaluationForm.value;
+      const currentUser = this.authService.getCurrentUser();
+  
+      if (!currentUser || !currentUser.id) {
+        alert("Erreur: Impossible de récupérer l'ID du jury. Veuillez vous reconnecter.");
+        return;
+      }
+  
       const evaluation = {
         candidatId: this.candidatId,
-        notes: this.criteres.map(critere => ({
-          critereId: critere.id,
-          note: this.evaluationForm.get(`note_${critere.id}`)?.value
-        })),
-        commentaires: this.evaluationForm.get('commentaires')?.value,
-        noteFinale: this.noteFinale
+        juryId: currentUser.id,
+        noteClarte: formValues.note_clarte,
+        noteContenu: formValues.note_contenu,
+        notePertinence: formValues.note_pertinence,
+        notePresentation: formValues.note_presentation,
+        noteReponses: formValues.note_reponses,
+        commentaire: formValues.commentaire,
+        moyenne: this.noteFinale
       };
-      
-      // Envoi des données au backend Spring Boot
-      this.evaluationService.createEvaluation(evaluation).subscribe({
-        next: (response: any) => {
-          alert('Évaluation enregistrée avec succès!');
-          this.router.navigate(['/evaluations']);
-        },
-        error: (error: any) => {
-          console.error('Erreur lors de l\'enregistrement:', error);
-          alert('Une erreur est survenue lors de l\'enregistrement de l\'évaluation.');
-        }
-      });
+  
+      // 🔥 CORRECT : UN SEUL IF / ELSE 🔥
+      if (this.evaluationId) {
+        // Mise à jour d'une évaluation existante
+        this.evaluationService.updateEvaluation(this.evaluationId, evaluation).subscribe({
+          next: () => {
+            alert('Évaluation mise à jour avec succès!');
+            this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
+          },
+          error: (err) => {
+            console.error("Erreur lors de la mise à jour de l'évaluation:", err);
+            alert("Erreur lors de la mise à jour de l'évaluation.");
+          }
+        });
+      } else {
+        // Création d'une nouvelle évaluation
+        this.evaluationService.createEvaluation(evaluation).subscribe({
+          next: () => {
+            alert('Évaluation enregistrée avec succès!');
+            this.router.navigate(['/dashboard'], { queryParams: { menu: 'soutenances' } });
+          },
+          error: (err) => {
+            console.error("Erreur lors de l'enregistrement de l'évaluation:", err);
+            alert("Erreur lors de l'enregistrement de l'évaluation.");
+          }
+        });
+      }
+  
     } else {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
+      // Marquer tous les champs invalides
       Object.keys(this.evaluationForm.controls).forEach(key => {
         this.evaluationForm.get(key)?.markAsTouched();
       });
-      alert('Veuillez remplir correctement tous les champs obligatoires.');
+      alert('Veuillez remplir tous les champs correctement.');
     }
   }
   

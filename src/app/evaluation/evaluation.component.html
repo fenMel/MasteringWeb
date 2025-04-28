@@ -47,9 +47,10 @@
               </span>
             </td>
             <td>
-              <button class="btn-evaluate" *ngIf="evaluation.statut !== 'Évalué'" (click)="evaluer(evaluation.id)">
+              <button class="btn-evaluate" *ngIf="evaluation.statut !== 'Évalué'" (click)="evaluer(evaluation)">
                 Évaluer
               </button>
+              
               <button  (click)="voirEvaluation(evaluation)" class="btn-view" *ngIf="evaluation.statut === 'Évalué'">
                 Voir
               </button>

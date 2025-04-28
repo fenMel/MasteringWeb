@@ -13,6 +13,7 @@ export class AuthService {
   private jwtToken: any;
   public roles: any;
   public username: any;
+  private currentUser: any = null;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -26,13 +27,47 @@ export class AuthService {
 
   saveTokenInSessionStorage(token: any) {
     if (this.isBrowser()) {
-      sessionStorage.setItem('access_token', token.body.token);
       this.jwtToken = token.body.token;
+      sessionStorage.setItem('access_token', this.jwtToken);
+  
       const jwtHelper = new JwtHelperService();
-      this.decodeMyToken();
+      const decodedToken = jwtHelper.decodeToken(this.jwtToken);
+  
+     this.currentUser = {
+      id: decodedToken.userId, 
+  username: decodedToken.sub,
+  roles: decodedToken.roles.map((r: any) => r.authority || r)
+};
+
+  
+      sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser)); // 🔥 Ajouté
     }
   }
-
+  
+  loadSessionData(): void {
+    if (this.isBrowser()) {
+      this.jwtToken = sessionStorage.getItem('access_token');
+      const user = sessionStorage.getItem('currentUser');
+      if (user) {
+        this.currentUser = JSON.parse(user);
+      }
+    }
+  }
+  
+  getCurrentUser() {
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+    if (this.isBrowser()) {
+      const user = sessionStorage.getItem('currentUser');
+      if (user) {
+        this.currentUser = JSON.parse(user);
+        return this.currentUser;
+      }
+    }
+    return null;
+  }
+  
   getToken() {
     return this.jwtToken;
   }
@@ -184,6 +219,8 @@ export class AuthService {
 
   logout() {
     sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('currentUser');
+    this.currentUser = null;
     this.jwtToken = null;
     this.router.navigateByUrl('/login');
   }

@@ -1,4 +1,3 @@
-
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,10 +8,8 @@ import { EvaluationService } from '../services/evaluation.service';
 
 @Component({
   standalone: true,
-
   selector: 'app-evaluation',
-  imports: [ CommonModule,
-    FormsModule],
+  imports: [ CommonModule, FormsModule ],
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.scss']
 })
@@ -21,7 +18,9 @@ export class EvaluationComponent implements OnInit {
   totalEvaluations: number = 0;
   pageActuelle: number = 1;
   evaluationsParPage: number = 5;
+
   @Input() setSousMenu!: (menu: string) => void;
+
   filtres: FiltresEvaluation = {
     dateRange: 'Toutes les dates',
     statut: 'Tout les statuts', 
@@ -30,12 +29,14 @@ export class EvaluationComponent implements OnInit {
 
   optionsDate = ['Toutes les dates', 'Aujourd\'hui', 'Cette semaine', 'Ce mois'];
   optionsStatut = ['Tout les statuts', 'Évalué', 'Non Évalué'];
-Math: Math = Math; // Pour utiliser Math dans le template
-  
 
-  constructor(private evaluationService: EvaluationService , private router: Router) {
-    console.log('Router:', this.router);  // Ajoute ce log
+  Math: Math = Math; // Pour utiliser Math dans le template
 
+  constructor(
+    private evaluationService: EvaluationService,
+    private router: Router
+  ) {
+    console.log('Router:', this.router);
   }
 
   ngOnInit(): void {
@@ -50,29 +51,27 @@ Math: Math = Math; // Pour utiliser Math dans le template
     ).subscribe(
       (data: any[]) => {
         console.log('Données d\'évaluations reçues:', data);
-        
-        // Extraire tous les IDs de candidats uniques
+
         const candidatIds = [...new Set(data.map(evaluation => evaluation.candidatId))];
-        
+
         if (candidatIds.length > 0) {
-          // Récupérer les informations pour tous les candidats
           this.evaluationService.getCandidatsParIds(candidatIds).subscribe(
             (candidats: any[]) => {
               console.log('Données de candidats reçues:', candidats);
-              
-              // Mapper les évaluations avec les informations des candidats
+
               this.evaluations = data.map(evaluation => {
                 const candidatInfo = candidats.find(c => c.id === evaluation.candidatId);
-                
+
                 return {
                   id: evaluation.id,
+                  candidatId: evaluation.candidatId, // ✅ Ajout candidatId
                   candidat: candidatInfo ? candidatInfo.nom + ' ' + candidatInfo.prenom : 'Candidat #' + evaluation.candidatId,
                   sujet: candidatInfo ? candidatInfo.sujet : 'Sujet non spécifié',
                   dateHeure: candidatInfo ? new Date(candidatInfo.dateSoutenance) : new Date(),
                   statut: evaluation.moyenne ? 'Évalué' : 'Non Évalué'
                 };
               });
-              
+
               this.totalEvaluations = this.evaluations.length;
             },
             error => {
@@ -95,21 +94,6 @@ Math: Math = Math; // Pour utiliser Math dans le template
     this.chargerEvaluations();
   }
 
-  evaluer(id: number): void {
-    this.evaluationService.evaluer(id).subscribe(
-      () => {
-        // Mettre à jour le statut localement pour éviter de recharger toutes les données
-        const evaluation = this.evaluations.find(e => e.id === id);
-        if (evaluation) {
-          evaluation.statut = 'Évalué';
-        }
-      },
-      error => {
-        console.error('Erreur lors de l\'évaluation', error);
-      }
-    );
-  }
-
   changerPage(page: number): void {
     this.pageActuelle = page;
   }
@@ -129,25 +113,42 @@ Math: Math = Math; // Pour utiliser Math dans le template
     this.filtres.candidat = '';
     this.appliquerFiltres();
   }
-  voirEvaluation(evaluation: any): void {
-    console.log('Evaluation:', evaluation);
-    
-    if (evaluation && evaluation.id) {
-      // utilisez le système de menu du dashboard
+  evaluer(evaluation: Evaluation): void {
+    console.log('Évaluer cette évaluation :', evaluation);
+  
+    if (this.setSousMenu) {
+      this.evaluationService.setSelectedEvaluationId(evaluation.id);    // ✅ Stocker l'ID de l'évaluation
+      this.evaluationService.setSelectedCandidatId(evaluation.candidatId); // ✅ Stocker l'ID du candidat
       this.setSousMenu('ajouter-evaluation');
-      
-      // Vous pouvez stocker l'ID d'évaluation dans un service
-      // ou le passer via des paramètres de route
-      this.router.navigate(['/dashboard'], {
+    } else {
+      this.router.navigate(['/dashboard'], { 
         queryParams: { 
-          menu: 'soutenances',
+          menu: 'soutenances', 
           sousMenu: 'ajouter-evaluation', 
           id: evaluation.id 
-        }
+        } 
       });
-    } else {
-      console.error('L\'évaluation ne contient pas d\'ID valide');
     }
   }
   
+
+  voirEvaluation(evaluation: any): void {
+    console.log('Voir évaluation:', evaluation);
+
+    if (evaluation && evaluation.id && evaluation.candidatId) {
+      this.evaluationService.setSelectedEvaluationId(evaluation.id);     // ✅ Stocker l'ID de l'évaluation
+      this.evaluationService.setSelectedCandidatId(evaluation.candidatId); // ✅ Stocker l'ID du candidat
+      this.evaluationService.setViewMode(true);                          // ✅ Mode lecture seule
+
+      if (this.setSousMenu) {
+        this.setSousMenu('ajouter-evaluation');
+      } else {
+        this.router.navigate(['/dashboard'], {
+          queryParams: { menu: 'soutenances', sousMenu: 'ajouter-evaluation' }
+        });
+      }
+    } else {
+      console.error('L\'évaluation ne contient pas d\'ID ou de candidatId valide');
+    }
+  }
 }
