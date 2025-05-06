@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-ajouter-formation',
   imports: [CommonModule],
+  standalone: true,
   templateUrl: './ajouter-formation.component.html',
   styleUrl: './ajouter-formation.component.scss'
 })

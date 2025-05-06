@@ -9,22 +9,24 @@ import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formatio
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
 import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
-import { EvaluationService } from '../services/evaluation.service'; 
+import { EvaluationService } from '../services/evaluation.service';
 
-import { ActivatedRoute } from '@angular/router'; 
+import { ActivatedRoute } from '@angular/router';
+import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    RouterModule, 
-    EvaluationComponent, 
-    GestionFormationsComponent, 
-    AjouterFormationComponent, 
-    SessionsFormationComponent, 
-    AjouterEvaluationComponent
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    EvaluationComponent,
+    GestionFormationsComponent,
+    AjouterFormationComponent,
+    SessionsFormationComponent,
+    AjouterEvaluationComponent,
+    AjoutUtilisateurs
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -40,37 +42,37 @@ export class DashboardComponent implements OnInit {
     private evaluationService: EvaluationService
 
   ) { }
-  
+
   ngOnInit(): void {
     // S'assurer que le token est décodé pour accéder aux rôles et au nom d'utilisateur
     this.authService.decodeMyToken();
-    
+
     // Affichage des informations de débogage
     console.log("Rôle JURY:", this.authService.isJury());
     console.log("Rôle CANDIDAT:", this.authService.isCandidat());
     console.log("Rôle CORDINATEUR:", this.authService.isCoordinateur());
     console.log("Utilisateur connecté:", this.authService.isConnected());
     console.log("Nom d'utilisateur:", this.authService.username);
-    
+
     // Si l'utilisateur n'est pas connecté, le authService.logout() dans votre service
     // devrait déjà gérer la redirection vers la page de connexion
     if (!this.authService.isConnected()) {
       console.log("L'utilisateur n'est pas connecté, redirection en cours...");
     }
-    
+
     // Récupérer les paramètres de la route pour définir le menu actif et le sous-menu
     this.route.queryParams.subscribe((params: any) => {
       if (params['menu']) {
         this.activeMenu = params['menu'];
         console.log("Menu actif (via URL) :", this.activeMenu);
       }
-      
+
       // Vérifiez si le sous-menu est spécifié dans les paramètres de la requête
       if (params['sousMenu']) {
         this.sousMenu = params['sousMenu'];
         console.log("Sous-menu actif (via URL) :", this.sousMenu);
       }
-      
+
       // Récupérer l'ID d'évaluation si présent
       if (params['id']) {
         this.evaluationId = +params['id']; // Le + convertit en nombre
@@ -80,16 +82,16 @@ export class DashboardComponent implements OnInit {
   }
   evaluer(evaluation: any) {
     console.log('Évaluer cette évaluation:', evaluation);
-  
+
     this.evaluationService.setSelectedEvaluationId(evaluation.id);
     this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
-  
+
     this.activeMenu = 'soutenances';
     this.sousMenu = 'ajouter-evaluation';
   }
-  
-  
-  
+
+
+
   setActiveMenu = (menu: string): void => {
     this.activeMenu = menu;
     if (menu === 'ListeFormations' || menu === 'ListeSessionsFormation') {
@@ -101,7 +103,7 @@ export class DashboardComponent implements OnInit {
     this.sousMenu = menu;
     console.log("Sous-menu changé à:", menu);
   };
- 
+
   // Dans votre dashboard.component.ts
   getRoleTitle(): string {
     if (this.authService.isJury()) {

@@ -9,7 +9,7 @@
         <h2 class="system-title">{{ getRoleTitle() }}</h2>
     </div>
   </header>
-  
+
   <!-- Conteneur principal avec sidebar -->
   <div class="content-wrapper">
     <!-- Barre latérale gauche pour jury -->
@@ -31,7 +31,7 @@
           <a (click)="setActiveMenu('parametres')">Paramètres</a>
         </div>
       </div>
-      
+
       <div class="logout-btn-container">
         <button class="logout-btn" (click)="authService.logout()">
           Se déconnecter
@@ -46,6 +46,9 @@
     </div>
     <div class="menu-item" [class.active]="activeMenu === 'candidats'">
       <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
+      <a (click)="setActiveMenu('ajout_utilisateurs')">Ajouter un utilisateur</a>
     </div>
     <div class="menu-item" [class.active]="activeMenu === 'jurys'">
       <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
@@ -66,7 +69,7 @@
       <a (click)="setActiveMenu('parametres')">Paramètres</a>
     </div>
   </div>
-  
+
   <div class="logout-btn-container">
     <button class="logout-btn" (click)="authService.logout()">
       Se déconnecter
@@ -95,7 +98,7 @@
           <a (click)="setActiveMenu('messages')">Messages</a>
         </div>
       </div>
-      
+
       <div class="logout-btn-container">
         <button class="logout-btn" (click)="authService.logout()">
           Se déconnecter
@@ -105,45 +108,45 @@
 
     <!-- Contenu principal pour jury -->
     <div *ngIf="authService.isJury()" class="main-content">
-    
+
       <ng-container *ngIf="activeMenu === 'soutenances'">
-        
+
           <!-- Liste des évaluations -->
           <app-evaluation
             *ngIf="sousMenu === 'liste'"
             [setSousMenu]="setSousMenu">
           </app-evaluation>
-          
+
           <!-- Formulaire d'ajout d'évaluation -->
           <app-ajouter-evaluation
             *ngIf="sousMenu === 'ajouter-evaluation'"
             [setSousMenu]="setSousMenu">
           </app-ajouter-evaluation>
         </ng-container>
-   
 
-       
+
+
     </div>
      <!-- Contenu principal pour coordinateur -->
-    
+
      <div *ngIf="authService.isCoordinateur()" class="main-content">
      <h1>Contenu du {{ activeMenu }}</h1>
-   
+
      <ng-container *ngIf="activeMenu === 'ListeFormations'">
-       
+
        <!-- Affiche le tableau -->
        <app-gestion-formations
          *ngIf="sousMenu === 'liste'"
          [setSousMenu]="setSousMenu">
        </app-gestion-formations>
-   
+
        <!-- Affiche le formulaire d'ajout -->
        <app-ajouter-formation *ngIf=" activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
      </ng-container>
-     
+
 
     <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
-      
+
       <!-- Affiche le tableau -->
       <app-sessions-formation
         *ngIf="sousMenu === 'liste'"
@@ -151,7 +154,15 @@
       </app-sessions-formation>
 
     </ng-container>
-  </div>  
+
+       <!-- Component pour l'ajout des utilisateurs -->
+       <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">
+
+         <!-- Affiche le tableau -->
+        <ajout-utilisateurs></ajout-utilisateurs>
+
+       </ng-container>
+  </div>
 
     <!-- Contenu principal simplifié pour candidat -->
     <div *ngIf="authService.isCandidat()" class="main-content">
@@ -186,7 +197,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Footer -->
   <footer class="mastering-footer">
     <div class="footer-content">

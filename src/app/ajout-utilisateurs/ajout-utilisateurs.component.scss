@@ -1,0 +1,215 @@
+// Variables
+$primary-color: #4361ee;
+$primary-dark: #3a56d4;
+$error-color: #ef476f;
+$success-color: #06d6a0;
+$text-color: #2b2d42;
+$text-light: #767c9f;
+$background-color: #f8f9fa;
+$card-bg: #ffffff;
+$border-radius: 12px;
+$box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
+
+// Mixins
+@mixin focus-state {
+  border-color: $primary-color;
+  box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+}
+
+// Main container
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: $background-color;
+}
+
+// Card styling
+.form-card {
+  width: 100%;
+  max-width: 500px;
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 40px;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, $primary-color, #4895ef);
+  }
+}
+
+// Form title
+.form-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-color;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+// Form group styling
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    color: $text-color;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 16px;
+    color: $text-color;
+    background-color: #fff;
+    transition: $transition;
+
+    &:focus {
+      outline: none;
+      @include focus-state;
+    }
+
+    &.invalid {
+      border-color: $error-color;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($error-color, 0.25);
+      }
+    }
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232b2d42' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 16px) center;
+    padding-right: 40px;
+  }
+}
+
+// Error message
+.error-message {
+  font-size: 14px;
+  color: $error-color;
+  margin-top: 6px;
+  font-weight: 500;
+
+  span {
+    display: block;
+    line-height: 1.4;
+  }
+}
+
+// Form actions
+.form-actions {
+  margin-top: 32px;
+}
+
+// Submit button
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: $primary-color;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: $primary-dark;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &.loading {
+    background-color: $primary-dark;
+  }
+}
+
+// Spinner animation
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Success message
+.success-message {
+  text-align: center;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: rgba($success-color, 0.15);
+  color: darken($success-color, 25%);
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// Error banner
+.error-banner {
+  text-align: center;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: rgba($error-color, 0.15);
+  color: darken($error-color, 15%);
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .form-card {
+    padding: 30px 20px;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+}

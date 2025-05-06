@@ -29,21 +29,21 @@ export class AuthService {
     if (this.isBrowser()) {
       this.jwtToken = token.body.token;
       sessionStorage.setItem('access_token', this.jwtToken);
-  
+
       const jwtHelper = new JwtHelperService();
       const decodedToken = jwtHelper.decodeToken(this.jwtToken);
-  
+
      this.currentUser = {
-      id: decodedToken.userId, 
+      id: decodedToken.userId,
   username: decodedToken.sub,
   roles: decodedToken.roles.map((r: any) => r.authority || r)
 };
 
-  
+
       sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser)); // 🔥 Ajouté
     }
   }
-  
+
   loadSessionData(): void {
     if (this.isBrowser()) {
       this.jwtToken = sessionStorage.getItem('access_token');
@@ -53,7 +53,7 @@ export class AuthService {
       }
     }
   }
-  
+
   getCurrentUser() {
     if (this.currentUser) {
       return this.currentUser;
@@ -67,7 +67,7 @@ export class AuthService {
     }
     return null;
   }
-  
+
   getToken() {
     return this.jwtToken;
   }
