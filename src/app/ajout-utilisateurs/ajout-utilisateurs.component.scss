@@ -1,3 +1,8 @@
+
+//modules
+@use 'sass:color';
+
+
 // Variables
 $primary-color: #4361ee;
 $primary-dark: #3a56d4;
@@ -180,7 +185,7 @@ $transition: all 0.3s ease;
   padding: 12px;
   margin-top: 20px;
   background-color: rgba($success-color, 0.15);
-  color: darken($success-color, 25%);
+  color: color.adjust($success-color, $lightness: -25%);
   border-radius: 8px;
   font-weight: 500;
   animation: fadeIn 0.3s ease-in-out;
@@ -192,7 +197,7 @@ $transition: all 0.3s ease;
   padding: 12px;
   margin-top: 20px;
   background-color: rgba($error-color, 0.15);
-  color: darken($error-color, 15%);
+  color: color.scale($success-color, $lightness: -25%);
   border-radius: 8px;
   font-weight: 500;
   animation: fadeIn 0.3s ease-in-out;
