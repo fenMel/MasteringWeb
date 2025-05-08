@@ -133,7 +133,7 @@ export class AjoutUtilisateurs implements OnInit {
           // Réinitialiser le message de succès après 3 secondes
           setTimeout(() => {
             this.submitSuccess = false;
-          }, 3000);
+          }, 6000);
 
           console.log(userData)
           console.log('Utilisateur enregistré avec succès:', response);
@@ -141,7 +141,7 @@ export class AjoutUtilisateurs implements OnInit {
         error: (error) => {
           this.isSubmitting = false;
           this.submitError = true;
-          this.errorMessage = error?.error?.message || 'Une erreur est survenue lors de l\'enregistrement';
+          this.errorMessage = error.error?.error || 'Une erreur est survenue lors de l\'enregistrement';
 
 
           console.log(userData)
