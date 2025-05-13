@@ -162,6 +162,13 @@
         <ajout-utilisateurs></ajout-utilisateurs>
 
        </ng-container>
+
+       <ng-container *ngIf="activeMenu === 'tableau'">
+
+         <!-- Affiche le tableau -->
+         <app-users-list></app-users-list>
+
+       </ng-container>
   </div>
 
     <!-- Contenu principal simplifié pour candidat -->

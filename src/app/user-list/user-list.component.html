@@ -1,0 +1,157 @@
+<div class="users-list-container">
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Recherche utilisateurs par noms, prénoms ou emails"
+      class="search-input"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange()"
+    >
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    Une erreur est survenue lors du chargement des utilisateurs.
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!loading && !error">
+    <!-- Table Controls -->
+    <div class="table-controls">
+      <div class="page-size-selector">
+        <label for="pageSizeSelect">Afficher:</label>
+        <select
+          id="pageSizeSelect"
+          [(ngModel)]="pageSize"
+          (change)="changePageSize(pageSize)"
+        >
+          <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+        </select>
+      </div>
+
+      <div class="pagination-info">
+        Affichage de {{ users.length ? (currentPage * pageSize) + 1 : 0 }} à
+        {{ Math.min((currentPage + 1) * pageSize, totalItems) }} sur {{ totalItems }} entrées
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <table class="users-table">
+      <thead>
+      <tr>
+        <th (click)="changeSort('nom')">Nom {{ getSortIcon('nom') }}</th>
+        <th (click)="changeSort('prenom')">Prénom {{ getSortIcon('prenom') }}</th>
+        <th (click)="changeSort('email')">Email {{ getSortIcon('email') }}</th>
+        <th (click)="changeSort('role')">Rôle {{ getSortIcon('role') }}</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.nom }}</td>
+        <td>{{ user.prenom }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+            <span class="role-badge"
+                  [ngClass]="user.role === 'Admin' ? 'role-admin' : 'role-user'">
+              {{ user.role }}
+            </span>
+        </td>
+        <td>
+          <div class="action-buttons">
+            <button
+              class="action-btn view-btn"
+              (click)="onVoirUser(user)"
+              title="Voir"
+            >
+              👁️
+            </button>
+            <button
+              class="action-btn delete-btn"
+              (click)="onDeleteUser(user)"
+              title="Supprimer"
+            >
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- No Users Message -->
+    <div *ngIf="users.length === 0" class="no-users-message">
+      Aucun utilisateur trouvé.
+    </div>
+
+    <!-- Pagination Controls -->
+    <div *ngIf="totalPages > 0" class="pagination">
+      <button
+        class="pagination-btn"
+        [disabled]="currentPage === 0"
+        (click)="previousPage()"
+      >
+        &laquo;
+      </button>
+
+      <button
+        *ngIf="totalPages > 1"
+        class="pagination-btn"
+        [class.active]="currentPage === 0"
+        (click)="goToPage(0)"
+      >
+        1
+      </button>
+
+      <span *ngIf="currentPage > 2" class="pagination-ellipsis">...</span>
+
+      <button
+        *ngIf="currentPage > 0 && currentPage !== 1"
+        class="pagination-btn"
+        (click)="goToPage(currentPage - 1)"
+      >
+        {{ currentPage }}
+      </button>
+
+      <button
+        *ngIf="currentPage > 0 && currentPage < totalPages - 1"
+        class="pagination-btn active"
+      >
+        {{ currentPage + 1 }}
+      </button>
+
+      <button
+        *ngIf="currentPage < totalPages - 2"
+        class="pagination-btn"
+        (click)="goToPage(currentPage + 1)"
+      >
+        {{ currentPage + 2 }}
+      </button>
+
+      <span *ngIf="currentPage < totalPages - 3" class="pagination-ellipsis">...</span>
+
+      <button
+        *ngIf="totalPages > 1"
+        class="pagination-btn"
+        [class.active]="currentPage === totalPages - 1"
+        (click)="goToPage(totalPages - 1)"
+      >
+        {{ totalPages }}
+      </button>
+
+      <button
+        class="pagination-btn"
+        [disabled]="currentPage >= totalPages - 1"
+        (click)="nextPage()"
+      >
+        &raquo;
+      </button>
+    </div>
+  </div>
+</div>

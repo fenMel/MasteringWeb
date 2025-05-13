@@ -116,6 +116,7 @@ export class AjoutUtilisateurs implements OnInit {
 
       // Si le mot de passe est vide en mode édition, le supprimer des données
       if (this.isEditMode && !userData.password) {
+
         // @ts-ignore
         delete userData.password;
       }

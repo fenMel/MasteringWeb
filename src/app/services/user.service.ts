@@ -31,6 +31,17 @@ export class UserService {
     });
   }
 
+
+  /**
+   * Récupère tous les utilisateurs
+   */
+  getAllUsers(): Observable<User[]> {
+    // @ts-ignore
+    return this.http.get<User[]>(`${this.apiUrl}/users`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
   /**
    * Met à jour un utilisateur existant
    * @param id L'ID de l'utilisateur
@@ -40,7 +51,7 @@ export class UserService {
     return this.http.put(`${this.apiUrl}/${id}`, user);
   }
 
-  /**
+  /**x
    * Récupère un utilisateur par son ID
    * @param id L'ID de l'utilisateur
    */
@@ -56,10 +67,4 @@ export class UserService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * Récupère tous les utilisateurs
-   */
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
-  }
 }

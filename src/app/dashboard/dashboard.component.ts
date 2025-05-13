@@ -13,6 +13,7 @@ import { EvaluationService } from '../services/evaluation.service';
 
 import { ActivatedRoute } from '@angular/router';
 import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
+import {UsersListComponent} from '../user-list/user-list.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +27,8 @@ import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.comp
     AjouterFormationComponent,
     SessionsFormationComponent,
     AjouterEvaluationComponent,
-    AjoutUtilisateurs
+    AjoutUtilisateurs,
+    UsersListComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
