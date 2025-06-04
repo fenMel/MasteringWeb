@@ -28,26 +28,26 @@ export class AuthService {
   saveTokenInSessionStorage(token: any) {
     if (this.isBrowser()) {
       this.jwtToken = token.body.token;
-      sessionStorage.setItem('access_token', this.jwtToken);
+      localStorage.setItem('access_token', this.jwtToken);
 
       const jwtHelper = new JwtHelperService();
       const decodedToken = jwtHelper.decodeToken(this.jwtToken);
 
-     this.currentUser = {
-      id: decodedToken.userId,
-  username: decodedToken.sub,
-  roles: decodedToken.roles.map((r: any) => r.authority || r)
-};
+      // Correction ici : on prend le premier champ d'id trouvé
+      this.currentUser = {
+        id: decodedToken.userId || decodedToken.id || decodedToken.uid,
+        username: decodedToken.sub,
+        roles: decodedToken.roles.map((r: any) => r.authority || r)
+      };
 
-
-      sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser)); // 🔥 Ajouté
+      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
     }
   }
 
   loadSessionData(): void {
     if (this.isBrowser()) {
-      this.jwtToken = sessionStorage.getItem('access_token');
-      const user = sessionStorage.getItem('currentUser');
+      this.jwtToken = localStorage.getItem('access_token');
+      const user = localStorage.getItem('currentUser');
       if (user) {
         this.currentUser = JSON.parse(user);
       }
@@ -59,7 +59,7 @@ export class AuthService {
       return this.currentUser;
     }
     if (this.isBrowser()) {
-      const user = sessionStorage.getItem('currentUser');
+      const user = localStorage.getItem('currentUser');
       if (user) {
         this.currentUser = JSON.parse(user);
         return this.currentUser;
@@ -74,7 +74,7 @@ export class AuthService {
 
   getTokenFromSessionStorage() {
     if (this.isBrowser()) {
-      this.jwtToken = sessionStorage.getItem('access_token');
+      this.jwtToken = localStorage.getItem('access_token');
     }
   }
 
@@ -218,8 +218,8 @@ export class AuthService {
 
 
   logout() {
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('currentUser');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('currentUser');
     this.currentUser = null;
     this.jwtToken = null;
     this.router.navigateByUrl('/login');

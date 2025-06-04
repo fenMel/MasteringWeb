@@ -10,14 +10,16 @@
     <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
   </div>
   
-  <!-- Contenu principal (visible seulement si données chargées et pas d'erreur) -->
-  <div *ngIf="!loading && !error">
+<div *ngIf="!loading && !error">
     <div class="candidate-card">
       <h2>Candidat: {{ candidat.nom }} {{ candidat.prenom }}</h2>
       <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
-      <p><strong>Date et heure:</strong> {{ candidat.dateSoutenance | date:'dd/MM/yyyy' }} | <strong>Salle:</strong> {{ candidat.salle }}</p>
+      <p>
+        <strong>Date et heure:</strong>
+        {{ candidat.dateSoutenance | date:'dd/MM/yyyy - HH:mm' }}
+        <span *ngIf="candidat.salle">| <strong>Salle:</strong> {{ candidat.salle }}</span>
+      </p>
       <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
-
     </div>
     
     <h2 class="evaluation-title">Grille d'évaluation</h2>

@@ -36,27 +36,27 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr *ngFor="let evaluation of evaluationsAffichees">
-            <td>{{ evaluation.candidat }}</td>
-            <td>{{ evaluation.sujet }}</td>
-            <td>{{ evaluation.dateHeure | date:'dd/MM/yyyy - HH:mm' }}</td>
-            <td>
-              <span class="status" [ngClass]="evaluation.statut === 'Évalué' ? 'status-green' : 'status-red'">
-                {{ evaluation.statut }}
-              </span>
-            </td>
-            <td>
-              <button class="btn-evaluate" *ngIf="evaluation.statut !== 'Évalué'" (click)="evaluer(evaluation)">
-                Évaluer
-              </button>
-              
-              <button  (click)="voirEvaluation(evaluation)" class="btn-view" *ngIf="evaluation.statut === 'Évalué'">
-                Voir
-              </button>
-            </td>
-          </tr>
-        </tbody>
+       <tbody>
+  <tr *ngFor="let evaluation of evaluationsAffichees">
+    <td>{{ evaluation.candidat.nom }} {{ evaluation.candidat.prenom }}</td>
+    <td>{{ evaluation.sujet }}</td>
+    <td>{{ evaluation.dateHeure | date:'dd/MM/yyyy - HH:mm' }}</td>
+    <td>
+      <span class="status" [ngClass]="evaluation.statut === 'Évalué' ? 'status-green' : 'status-red'">
+        {{ evaluation.statut }} 
+      </span>
+    </td>
+    <td>
+      <button class="btn-evaluate" *ngIf="evaluation.statut !== 'Évalué'" (click)="evaluer(evaluation)">
+        Évaluer
+      </button>
+
+      <button (click)="voirEvaluation(evaluation)" class="btn-view" *ngIf="evaluation.statut === 'Évalué'">
+        Voir
+      </button>
+    </td>
+  </tr>
+</tbody>
       </table>
     </div>
     

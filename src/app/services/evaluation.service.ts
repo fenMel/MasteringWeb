@@ -1,7 +1,6 @@
-// EvaluationService corrigé 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, BehaviorSubject } from 'rxjs';
 import { Evaluation } from '../evaluation/evaluation.model';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment.prod';
@@ -10,13 +9,16 @@ import { environment } from '../../environments/environment.prod';
   providedIn: 'root'
 })
 export class EvaluationService {
-  constructor(private authService: AuthService, private http: HttpClient) {}
-
   private apiUrl = environment.apiUrl;
 
   private selectedCandidatId: number | null = null;
-  private selectedEvaluationId: number | null = null; // Ajout pour évaluation
+  private selectedEvaluationId: number | null = null;
   private viewMode: boolean = false;
+
+  private selectedCandidatDetailsSource = new BehaviorSubject<any | null>(null);
+  selectedCandidatDetails$ = this.selectedCandidatDetailsSource.asObservable();
+
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
     return new HttpHeaders({
@@ -41,8 +43,11 @@ export class EvaluationService {
       params
     });
   }
+
   updateEvaluation(id: number, evaluation: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, evaluation);
+    return this.http.put(`${this.apiUrl}/api/evaluations/${id}`, evaluation, {
+      headers: this.getAuthHeaders()
+    });
   }
 
   evaluer(id: number): Observable<any> {
@@ -56,30 +61,23 @@ export class EvaluationService {
       headers: this.getAuthHeaders()
     });
   }
+
   getCurrentUser(): any {
     const token = this.authService.getToken();
-        if (token) {
-      // Si vous stockez les informations de l'utilisateur dans le localStorage
+    if (token) {
       const userData = localStorage.getItem('currentUser');
       return userData ? JSON.parse(userData) : null;
-      
-      // OU si vous décodez le token JWT
-      // return this.jwtHelper.decodeToken(token);
     }
     return null;
   }
+
   getEvaluation(id: number): Observable<Evaluation> {
-    console.log('TOKEN ACTUEL:', this.authService.getToken());
     return this.http.get<Evaluation>(`${this.apiUrl}/api/evaluations/${id}`, {
       headers: this.getAuthHeaders()
     });
   }
 
-  // updateEvaluation(id: number, evaluation: any): Observable<Evaluation> {
-  //   return this.http.put<Evaluation>(`${this.apiUrl}/api/evaluations/${id}`, evaluation, {
-  //     headers: this.getAuthHeaders()
-  //   });
-  // }
+  // --- CANDIDATS ---
 
   getCandidat(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/api/evaluations/candidat/${id}`, {
@@ -92,12 +90,6 @@ export class EvaluationService {
       headers: this.getAuthHeaders()
     });
   }
-
-  // getCriteres(): Observable<any[]> {
-  //   return this.http.get<any[]>(`${this.apiUrl}/api/criteres`, {
-  //     headers: this.getAuthHeaders()
-  //   });
-  // }
 
   getCandidatsPresents(): Observable<any[]> {
     const params = new HttpParams().set('present', 'true');
@@ -114,15 +106,21 @@ export class EvaluationService {
     return forkJoin(requests);
   }
 
-  getEvaluationForCandidat(candidatId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/evaluations/candidat/${candidatId}`);
-  }
+  // --- EVALUATIONS PAR CANDIDAT ---
 
-  getCandidatId(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/evaluations/candidats/${id}`, {
+  getEvaluationForCandidat(candidatId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/evaluations/candidat/${candidatId}`, {
       headers: this.getAuthHeaders()
     });
   }
+
+  getCandidatId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/evaluations/candidat/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // --- SELECTIONS ET MODES ---
 
   setSelectedCandidatId(id: number): void { this.selectedCandidatId = id; }
   getSelectedCandidatId(): number | null { return this.selectedCandidatId; }
@@ -134,9 +132,22 @@ export class EvaluationService {
   setViewMode(isViewMode: boolean): void { this.viewMode = isViewMode; }
   getViewMode(): boolean { return this.viewMode; }
   resetSelection(): void { this.selectedCandidatId = null; this.viewMode = false; }
+
+  // --- CRITERES ---
+
   getCriteres(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/criteres`, {
       headers: this.getAuthHeaders()
     });
+  }
+
+  // --- CANDIDAT DETAILS PARTAGE ---
+
+  setSelectedCandidatDetails(details: any): void {
+    this.selectedCandidatDetailsSource.next(details);
+  }
+
+  getSelectedCandidatDetails(): Observable<any | null> {
+    return this.selectedCandidatDetailsSource.asObservable();
   }
 }
