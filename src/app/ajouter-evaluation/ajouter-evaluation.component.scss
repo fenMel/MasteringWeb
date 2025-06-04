@@ -1,0 +1,211 @@
+.evaluation-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .loading-indicator {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: #6c757d;
+  }
+  
+  .error-container {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+    
+    .error-message {
+      color: #721c24;
+      margin-bottom: 15px;
+    }
+    
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: #0069d9;
+      }
+    }
+  }
+  
+  .candidate-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    
+    h2 {
+      margin-top: 0;
+      color: #212529;
+    }
+    
+    p {
+      margin: 5px 0;
+      color: #495057;
+    }
+  }
+  
+  .evaluation-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #343a40;
+  }
+  
+  .evaluation-grid {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: #fff;
+  }
+  
+  .grid-header, .grid-row {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .grid-header {
+    background-color: #e9ecef;
+    font-weight: bold;
+  }
+  
+  .cell {
+    padding: 12px;
+    
+    &.header {
+      color: #495057;
+    }
+    
+    &.critere {
+      flex: 3;
+      
+      .critere-nom {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      
+      .critere-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+    }
+    
+    &.coefficient, &.note, &.contribution {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  .note-input {
+   
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    
+    &:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+  
+  .error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+  
+  .commentaires-section {
+    padding: 15px;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+  }
+  
+  .commentaires-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    resize: vertical;
+    
+    &:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+  
+  .note-finale-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #f1f8e9;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  .note-finale {
+    font-size: 1.2rem;
+    
+    .note-value {
+      font-weight: bold;
+      color: #2e7d32;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    
+    &.btn-annuler {
+      background-color: #e57373;
+      color: white;
+      
+      &:hover {
+        background-color: #ef5350;
+      }
+    }
+    
+    &.btn-valider {
+      background-color: #64b5f6;
+      color: white;
+      
+      &:hover {
+        background-color: #42a5f5;
+      }
+    }
+  }
