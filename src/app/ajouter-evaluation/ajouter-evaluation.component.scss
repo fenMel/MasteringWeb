@@ -201,6 +201,14 @@
     }
     
     &.btn-valider {
+      background-color: #70f664;
+      color: white;
+      
+      &:hover {
+        background-color: #42f55d;
+      }
+    }
+    &.btn-modifier {
       background-color: #64b5f6;
       color: white;
       

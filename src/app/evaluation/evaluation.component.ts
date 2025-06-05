@@ -34,6 +34,8 @@ export class EvaluationComponent implements OnInit {
 
   Math: Math = Math; // To use Math in the template
 
+  modeVoir: boolean = false; // Ajout de la propriété modeVoir
+
   constructor(
     private evaluationService: EvaluationService,
     private router: Router
@@ -43,6 +45,8 @@ export class EvaluationComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerEvaluations();
+    this.modeVoir = this.evaluationService.getViewMode(); // récupère le mode depuis le service
+    
   }
 
 chargerEvaluations(): void {
@@ -155,31 +159,38 @@ chargerEvaluations(): void {
     this.appliquerFiltres();
   }
 
+  // evaluer method for handling evaluation action
   evaluer(evaluation: Evaluation): void {
     console.log('Évaluer cette évaluation :', evaluation);
 
+    // Set both candidateId AND evaluationId if it exists, and set mode to edit (false)
+    this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
+    // Add this line to pass the evaluation ID if you intend to edit an existing one
+    this.evaluationService.setSelectedEvaluationId(evaluation.id); // <--- ADD THIS LINE
+    this.evaluationService.setViewMode(false); // mode édition
+
     if (this.setSousMenu) {
-      this.evaluationService.setSelectedEvaluationId(evaluation.id);
-      this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
       this.setSousMenu('ajouter-evaluation');
     } else {
       this.router.navigate(['/dashboard'], {
         queryParams: {
           menu: 'soutenances',
           sousMenu: 'ajouter-evaluation',
-          id: evaluation.id
+        
         }
       });
     }
   }
 
 
+
   voirEvaluation(evaluation: any): void {
     console.log('Voir évaluation:', evaluation);
+  this.evaluationService.setViewMode(true); // mode lecture seule
 
     if (evaluation && evaluation.id && evaluation.candidatId) {
       // Set selected evaluation and candidate IDs for navigation
-      this.evaluationService.setSelectedEvaluationId(evaluation.id);
+this.evaluationService.setSelectedEvaluationId(evaluation.id); 
       this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
       this.evaluationService.setViewMode(true);
 
@@ -218,8 +229,8 @@ chargerEvaluations(): void {
     } else {
       console.error('L\'évaluation ne contient pas d\'ID ou de candidatId valide');
     }
-  }
-
+// Duplicate evaluer method removed to fix duplicate implementation error
+}
   // Modified to expect an object for 'candidat'
  getNomPrenomCandidat(candidat: { nom: string; prenom: string }): string {
   if (!candidat) return '';

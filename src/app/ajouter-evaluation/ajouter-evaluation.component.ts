@@ -1,11 +1,10 @@
-// ajouter-evaluation.component.ts
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common'; 
 import { EvaluationService } from '../services/evaluation.service';
 import { AuthService } from '../services/auth.service';
-import { Subject, forkJoin, Observable } from 'rxjs'; // <-- Added Observable here!
+import { Subject, forkJoin, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 interface Critere {
@@ -14,6 +13,28 @@ interface Critere {
   description: string;
   coefficient: number;
 }
+
+interface Candidat {
+  id: number;
+  nom: string;
+  prenom: string;
+}
+interface Evaluation {
+  id: number;
+  jury: { id: number };
+  candidat: Candidat; // Nested candidate object
+  sujet: string;
+  dateHeure: string; // Or Date, depending on your backend's date format and Angular's parsing
+  salle: string;
+  noteClarte: number;
+  noteContenu: number;
+  notePertinence: number;
+  notePresentation: number;
+  noteReponses: number;
+  commentaire: string;
+  moyenne: number;
+}
+
 
 @Component({
   selector: 'app-ajouter-evaluation',
@@ -24,15 +45,19 @@ interface Critere {
 })
 export class AjouterEvaluationComponent implements OnInit, OnDestroy {
   evaluationForm: FormGroup;
-  criteres: Critere[] = []; // This doesn't seem to be used in the template yet
-  candidat: any = {};
+  criteres: Critere[] = []; // This doesn't seem to be used, consider removing if not needed.
+  candidat: any = {}; // Consider a more specific interface for Candidat
   loading: boolean = true;
   error: string | null = null;
   noteFinale: number = 0;
   evaluationId: number | null = null;
   candidatId: number | null = null;
   juryId: number | null = null;
-  isViewMode: boolean = false;
+  isViewMode: boolean = false; // Controls if the form is disabled
+  modeVoir: boolean = false; // Another flag for view mode, consider consolidating with isViewMode
+
+  // Store the full evaluation data loaded from the backend for updates
+  evaluationLoadedData: any = null; // Use EvaluationData interface here if defined
 
   @Input() setSousMenu!: (val: string) => void;
 
@@ -56,7 +81,7 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 1. Get Jury ID
+    // 1. Get Jury ID from current user
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser.id) {
       this.juryId = currentUser.id;
@@ -68,33 +93,35 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // 2. Get data passed from EvaluationComponent (if any)
+    // 2. Get data passed from EvaluationComponent (via service)
     this.evaluationId = this.evaluationService.getSelectedEvaluationId();
+    console.log('DEBUG: evaluationId récupéré:', this.evaluationId);
     this.candidatId = this.evaluationService.getSelectedCandidatId();
     this.isViewMode = this.evaluationService.getViewMode();
-
-    if (this.isViewMode) {
-      this.evaluationForm.disable(); // Disable form if in view mode
+    this.modeVoir = this.evaluationService.getViewMode(); // Synchronize with isViewMode
+    if (this.modeVoir) {
+      this.evaluationForm.disable();
+    } else {
+      this.evaluationForm.enable();
     }
 
     // 3. Load data based on available IDs
-    // Pass 'null' explicitly for candidatId if it's null, as chargerDonnees now accepts it.
     if (this.candidatId) {
-      this.chargerDonnees(this.candidatId, this.evaluationId);
+      this.chargerDonnees(this.candidatId, this.evaluationId ?? null);
     } else {
       // Fallback for direct URL access without service data (e.g., if refreshed)
       this.route.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
         if (params['id']) {
-          this.evaluationId = +params['id'];
+          this.evaluationId = +params['id']; // Convert to number
           // If only evaluationId is available, fetch the evaluation to get candidatId
           this.evaluationService.getEvaluation(this.evaluationId).pipe(takeUntil(this.destroy$)).subscribe({
             next: (evaluation: any) => {
-              this.candidatId = evaluation.candidatId;
-              // Call chargerDonnees with the newly found candidatId
+              this.candidatId = evaluation.candidat.id; // Correctly get candidat ID from nested object
+              this.evaluationLoadedData = evaluation; // Store the loaded evaluation data here too
               this.chargerDonnees(this.candidatId, this.evaluationId);
             },
             error: (err) => {
-              console.error("Erreur lors de la récupération de l'évaluation:", err);
+              console.error("Erreur lors de la récupération de l'évaluation par ID:", err);
               this.error = "Impossible de charger l'évaluation.";
               this.loading = false;
             }
@@ -106,7 +133,7 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Subscribe to form value changes to update the final note
+    // Subscribe to form value changes to update the final note dynamically
     this.evaluationForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -117,74 +144,72 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.evaluationService.resetSelectedEvaluationId();
+    // Reset service state when component is destroyed to prevent stale data
     this.evaluationService.resetSelection();
     this.evaluationService.setSelectedCandidatDetails(null);
   }
 
-  // Changed candidatId parameter type to number | null
   private chargerDonnees(candidatId: number | null, evaluationId: number | null): void {
-  this.loading = true;
-  this.error = null;
+    this.loading = true;
+    this.error = null;
 
-  if (candidatId === null) {
-    this.error = "Impossible de charger les données: l'ID du candidat est manquant.";
-    this.loading = false;
-    return;
-  }
-
-  const requests: Observable<any>[] = [
-    this.evaluationService.getCandidat(candidatId)
-  ];
-
-  if (evaluationId) {
-    requests.push(this.evaluationService.getEvaluation(evaluationId));
-  }
-
-  forkJoin(requests).pipe(takeUntil(this.destroy$)).subscribe({
-    next: (results: any[]) => {
-      console.log('Résultats forkJoin:', results);
-
-      const [candidat, evaluation] = results;
-      this.candidat = candidat; // Assign the base candidate object
-
-      if (evaluation) {
-        // Assign properties from evaluation if they exist, or keep candidate's
-        this.candidat.sujet = evaluation.sujet || this.candidat.sujet;
-        this.candidat.dateSoutenance = evaluation.dateHeure || this.candidat.dateSoutenance;
-        // **ADD THIS LINE:** Assign salle from evaluation if available
-        this.candidat.salle = evaluation.salle || this.candidat.salle;
-      }
-
-      console.log("Informations du candidat chargées:", this.candidat);
-
-      if (evaluationId && results[1]) {
-        const evaluationData = results[1];
-        console.log("Données d'évaluation existantes chargées:", evaluationData);
-
-        this.evaluationForm.patchValue({
-          note_clarte: evaluationData.noteClarte,
-          note_contenu: evaluationData.noteContenu,
-          note_pertinence: evaluationData.notePertinence,
-          note_presentation: evaluationData.notePresentation,
-          note_reponses: evaluationData.noteReponses,
-          commentaire: evaluationData.commentaire
-        });
-        this.calculerNoteFinale();
-      } else if (evaluationId && !results[1]) {
-        console.warn(`Aucune évaluation trouvée pour l'ID: ${evaluationId}. Traitement comme nouvelle évaluation.`);
-      } else {
-        console.log("Pas d'évaluation existante, formulaire vide pour nouvelle évaluation.");
-      }
+    if (candidatId === null) {
+      this.error = "Impossible de charger les données: l'ID du candidat est manquant.";
       this.loading = false;
-    },
-    error: (err) => {
-      console.error("Erreur lors du chargement des données (candidat ou évaluation):", err);
-      this.error = "Impossible de charger les informations nécessaires.";
-      this.loading = false;
+      return;
     }
-  });
-}
+
+    const requests: Observable<any>[] = [
+      this.evaluationService.getCandidat(candidatId)
+    ];
+
+    if (evaluationId) {
+      requests.push(this.evaluationService.getEvaluation(evaluationId));
+    }
+
+    forkJoin(requests).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (results: any[]) => {
+        const [candidat, evaluation] = results;
+        // Ensure candidat is correctly handled if getCandidat returns an array
+        this.candidat = Array.isArray(candidat) && candidat.length > 0 ? candidat[0] : candidat;
+
+        if (evaluationId && results[1]) {
+          this.evaluationLoadedData = results[1]; // Store the full loaded evaluation data
+          const evaluationData = this.evaluationLoadedData;
+
+          // Patch form values with existing evaluation data
+          this.evaluationForm.patchValue({
+            note_clarte: evaluationData.noteClarte,
+            note_contenu: evaluationData.noteContenu,
+            note_pertinence: evaluationData.notePertinence,
+            note_presentation: evaluationData.notePresentation,
+            note_reponses: evaluationData.noteReponses,
+            commentaire: evaluationData.commentaire
+          });
+          this.calculerNoteFinale();
+
+          // Populate candidat details from evaluation if available, or fall back to candidat data
+          // This is useful if sujet, dateHeure, salle are part of the evaluation object returned by backend
+          this.candidat.sujet = evaluationData.sujet || this.candidat.sujet;
+          this.candidat.dateSoutenance = evaluationData.dateHeure || this.candidat.dateSoutenance;
+          this.candidat.salle = evaluationData.salle || this.candidat.salle;
+
+        } else {
+          // This path is for new evaluations (which aren't fully supported by backend currently for direct creation)
+          // or if no evaluation is found for the given ID.
+          this.evaluationForm.reset();
+          this.noteFinale = 0;
+          this.evaluationLoadedData = null; // No existing data to load
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des données (candidat ou évaluation):", err);
+        this.error = "Impossible de charger les informations nécessaires.";
+        this.loading = false;
+      }
+    });
+  }
 
   calculerNoteFinale(): void {
     const notes = [
@@ -195,6 +220,7 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
       this.evaluationForm.get('note_reponses')?.value || 0
     ];
 
+    // Filter out non-numeric or out-of-range values to ensure valid calculation
     const validNotes = notes.filter(note => typeof note === 'number' && note >= 0 && note <= 20);
 
     if (validNotes.length > 0) {
@@ -205,12 +231,8 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
     }
   }
 
-  mettreAJourNote(): void {
-    // This method is called on (input) event from the template.
-    // valueChanges subscription already handles re-calculating the noteFinale.
-    // You can remove this method if the valueChanges subscription is sufficient,
-    // or keep it if you need specific logic on each input.
-  }
+  // No longer needed due to valueChanges subscription
+  // mettreAJourNote(): void { }
 
   annuler(): void {
     if (confirm('Êtes-vous sûr de vouloir annuler cette évaluation ? Toutes les modifications non sauvegardées seront perdues.')) {
@@ -228,59 +250,56 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
 
   validerEvaluation(): void {
     if (this.evaluationForm.valid) {
-      if (this.isViewMode) {
-        alert("Vous êtes en mode consultation. L'évaluation ne peut pas être modifiée.");
-        return;
-      }
-
       const formValues = this.evaluationForm.value;
 
-      if (this.candidatId === null) { // Use strict equality check
+      if (this.candidatId === null) {
         alert("Erreur: ID du candidat non disponible.");
         return;
       }
-      if (this.juryId === null) { // Use strict equality check
+      if (this.juryId === null) {
         alert("Erreur: ID du jury non disponible. Veuillez vous reconnecter.");
         return;
       }
 
       const evaluationPayload = {
-        candidatId: this.candidatId,
-        juryId: this.juryId,
+        jury: { id: this.juryId },
+        candidat: { id: this.candidatId },
         noteClarte: formValues.note_clarte,
         noteContenu: formValues.note_contenu,
         notePertinence: formValues.note_pertinence,
         notePresentation: formValues.note_presentation,
         noteReponses: formValues.note_reponses,
         commentaire: formValues.commentaire,
-        moyenne: this.noteFinale
+        moyenne: this.noteFinale,
+        // Ensure these fields are sent, using loaded data for existing evaluations
+        // or null/empty string for new ones if backend permits.
+        // This is crucial if backend expects them to be present.
+        sujet: this.evaluationLoadedData?.sujet || null,
+        dateHeure: this.evaluationLoadedData?.dateHeure || null,
+        salle: this.evaluationLoadedData?.salle || null
       };
 
-      if (this.evaluationId) {
-        // Update existing evaluation
-        this.evaluationService.updateEvaluation(this.evaluationId, evaluationPayload).pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-            alert('Évaluation mise à jour avec succès!');
-            this.retourListe();
-          },
-          error: (err) => {
-            console.error("Erreur lors de la mise à jour de l'évaluation:", err);
-            alert("Erreur lors de la mise à jour de l'évaluation.");
-          }
-        });
-      } else {
-        // Create new evaluation
-        this.evaluationService.createEvaluation(evaluationPayload).pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-            alert('Évaluation enregistrée avec succès!');
-            this.retourListe();
-          },
-          error: (err) => {
-            console.error("Erreur lors de l'enregistrement de l'évaluation:", err);
-            alert("Erreur lors de l'enregistrement de l'évaluation.");
-          }
-        });
+      console.log('Payload sent to backend:', evaluationPayload);
+
+      let operation$: Observable<any>;
+
+      if (this.evaluationId) { // If evaluationId exists, it's an UPDATE
+        operation$ = this.evaluationService.updateEvaluation(this.evaluationId, evaluationPayload);
+      } else { // If no evaluationId, it's a CREATE
+        operation$ = this.evaluationService.createEvaluation(evaluationPayload);
       }
+
+      operation$.pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          alert(this.evaluationId ? 'Évaluation mise à jour avec succès!' : 'Évaluation enregistrée avec succès!');
+          this.retourListe();
+        },
+        error: (err) => {
+          console.error("Erreur lors de l'opération sur l'évaluation:", err);
+          const errorMessage = err.error?.message || err.message || "Erreur inconnue lors de l'enregistrement/mise à jour.";
+          alert("Erreur lors de l'opération sur l'évaluation: " + errorMessage);
+        }
+      });
 
     } else {
       Object.keys(this.evaluationForm.controls).forEach(key => {
@@ -288,5 +307,16 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
       });
       alert('Veuillez remplir tous les champs obligatoires et corriger les erreurs.');
     }
+  }
+
+  // Helper methods to control form state
+  voirEvaluation(): void {
+    this.modeVoir = true;
+    this.evaluationForm.disable();
+  }
+
+  modifierEvaluation(): void {
+    this.modeVoir = false;
+    this.evaluationForm.enable();
   }
 }

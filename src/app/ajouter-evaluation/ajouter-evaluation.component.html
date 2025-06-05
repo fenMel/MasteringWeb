@@ -1,16 +1,14 @@
 <div class="evaluation-container">
-  <!-- Affichage du chargement -->
   <div *ngIf="loading" class="loading-indicator">
     <p>Chargement des données...</p>
   </div>
-  
-  <!-- Affichage des erreurs -->
+
   <div *ngIf="error" class="error-container">
     <p class="error-message">{{ error }}</p>
     <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
   </div>
-  
-<div *ngIf="!loading && !error">
+
+  <div *ngIf="!loading && !error">
     <div class="candidate-card">
       <h2>Candidat: {{ candidat.nom }} {{ candidat.prenom }}</h2>
       <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
@@ -21,17 +19,16 @@
       </p>
       <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
     </div>
-    
+
     <h2 class="evaluation-title">Grille d'évaluation</h2>
-    
+
     <form [formGroup]="evaluationForm" (ngSubmit)="validerEvaluation()">
       <div class="evaluation-grid">
         <div class="grid-header">
           <div class="cell header">Critère</div>
           <div class="cell header note">Note /20</div>
         </div>
-        
-        <!-- Clarté -->
+
         <div class="grid-row">
           <div class="cell critere">
             <div class="critere-nom">Clarté</div>
@@ -50,8 +47,7 @@
             </div>
           </div>
         </div>
-        
-        <!-- Contenu -->
+
         <div class="grid-row">
           <div class="cell critere">
             <div class="critere-nom">Contenu</div>
@@ -70,8 +66,7 @@
             </div>
           </div>
         </div>
-        
-        <!-- Pertinence -->
+
         <div class="grid-row">
           <div class="cell critere">
             <div class="critere-nom">Pertinence</div>
@@ -90,8 +85,7 @@
             </div>
           </div>
         </div>
-        
-        <!-- Présentation -->
+
         <div class="grid-row">
           <div class="cell critere">
             <div class="critere-nom">Présentation</div>
@@ -110,8 +104,7 @@
             </div>
           </div>
         </div>
-        
-        <!-- Réponses -->
+
         <div class="grid-row">
           <div class="cell critere">
             <div class="critere-nom">Réponses</div>
@@ -130,7 +123,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="commentaires-section">
           <h3>Commentaires</h3>
           <textarea
@@ -140,16 +133,19 @@
             class="commentaires-textarea"></textarea>
         </div>
       </div>
-      
+
       <div class="note-finale-section">
         <div class="note-finale">
           <span>Note finale : </span>
           <span class="note-value">{{ noteFinale }}/20</span>
         </div>
-        
+
         <div class="action-buttons">
-          <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
-          <button type="submit" class="btn btn-valider">Valider l'évaluation</button>
+          <button *ngIf="modeVoir" type="button" class="btn btn-modifier" (click)="modifierEvaluation()">Modifier</button>
+          <ng-container *ngIf="!modeVoir">
+            <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
+            <button type="submit" class="btn btn-valider">Valider l'évaluation</button>
+          </ng-container>
         </div>
       </div>
     </form>
