@@ -14,7 +14,7 @@
       <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
       <p>
         <strong>Date et heure:</strong>
-        {{ candidat.dateSoutenance | date:'dd/MM/yyyy - HH:mm' }}
+        {{ candidat.dateHeure | date:'short'  }}
         <span *ngIf="candidat.salle">| <strong>Salle:</strong> {{ candidat.salle }}</span>
       </p>
       <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
@@ -131,6 +131,9 @@
             placeholder="Ajouter vos commentaires qualitatifs ici..."
             rows="5"
             class="commentaires-textarea"></textarea>
+          <div *ngIf="evaluationForm.get('commentaire')?.touched && evaluationForm.get('commentaire')?.invalid" class="error-message">
+            Le commentaire est obligatoire (au moins 5 caractères).
+          </div>
         </div>
       </div>
 
