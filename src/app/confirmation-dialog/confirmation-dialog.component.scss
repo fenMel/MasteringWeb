@@ -1,0 +1,34 @@
+/* Style pour le titre */
+h2[mat-dialog-title] {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #0a0202; /* rouge Material */
+  margin-bottom: 8px;
+}
+
+/* Style pour le contenu */
+mat-dialog-content p {
+  font-size: 1.1em;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+/* Style pour les boutons */
+mat-dialog-actions {
+  margin-top: 16px;
+}
+
+button[mat-button] {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+button[mat-raised-button] {
+  color: #fff;
+  background: #3957c6;
+  font-weight: 600;
+}
+
+button[mat-raised-button]:hover {
+  background: #0f2eb8;
+}

@@ -201,6 +201,14 @@
     }
     
     &.btn-valider {
+      background-color: #70f664;
+      color: white;
+      
+      &:hover {
+        background-color: #42f55d;
+      }
+    }
+    &.btn-modifier {
       background-color: #64b5f6;
       color: white;
       
@@ -209,3 +217,5 @@
       }
     }
   }
+  .snackbar-success { background: #43a047; color: #fff; }
+.snackbar-error { background: #e53935; color: #fff; }

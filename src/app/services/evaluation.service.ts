@@ -125,7 +125,7 @@ export class EvaluationService {
   setSelectedCandidatId(id: number): void { this.selectedCandidatId = id; }
   getSelectedCandidatId(): number | null { return this.selectedCandidatId; }
 
-  setSelectedEvaluationId(id: number): void { this.selectedEvaluationId = id; }
+  setSelectedEvaluationId(id: number ): void { this.selectedEvaluationId = id; }
   getSelectedEvaluationId(): number | null { return this.selectedEvaluationId; }
   resetSelectedEvaluationId(): void { this.selectedEvaluationId = null; }
 

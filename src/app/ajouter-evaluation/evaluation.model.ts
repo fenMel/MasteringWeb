@@ -1,5 +1,4 @@
 export interface Evaluation {
-  juryId: any;
   id: number;
   candidat: { 
     nom: string;
