@@ -145,12 +145,20 @@
 
         <div class="action-buttons">
           <button *ngIf="modeVoir" type="button" class="btn btn-modifier" (click)="modifierEvaluation()">Modifier</button>
+          <button
+      *ngIf="modeVoir && authService.isCoordinateur() && evaluationId"
+      class="btn btn-annuler"
+      (click)="supprimerEvaluation()">
+      Supprimer l'évaluation
+    </button>
           <ng-container *ngIf="!modeVoir">
             <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
             <button type="submit" class="btn btn-valider">Valider l'évaluation</button>
+         
           </ng-container>
         </div>
       </div>
     </form>
+    
   </div>
 </div>

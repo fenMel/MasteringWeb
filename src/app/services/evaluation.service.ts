@@ -84,7 +84,12 @@ export class EvaluationService {
       headers: this.getAuthHeaders()
     });
   }
-
+getJury(id: number): Observable<{id: number, nom: string, prenom: string}> {
+    return this.http.get<{id: number, nom: string, prenom: string}>(
+        `${this.apiUrl}/api/evaluations/jury-info/${id}`,
+        { headers: this.getAuthHeaders() }
+    );
+}
   getCandidats(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/evaluations/candidat`, {
       headers: this.getAuthHeaders()
@@ -105,7 +110,10 @@ export class EvaluationService {
     const requests = ids.map(id => this.getCandidat(id));
     return forkJoin(requests);
   }
-
+  getJurysParIds(juryIds: number[]): Observable<any[]> {
+    const requests = juryIds.map(id => this.getJury(id));
+    return forkJoin(requests);
+  }
   // --- EVALUATIONS PAR CANDIDAT ---
 
   getEvaluationForCandidat(candidatId: number): Observable<any> {
@@ -150,4 +158,16 @@ export class EvaluationService {
   getSelectedCandidatDetails(): Observable<any | null> {
     return this.selectedCandidatDetailsSource.asObservable();
   }
+
+
+  resetEvaluation(evaluationId: number): Observable<any> {
+  return this.http.put(`${this.apiUrl}/api/evaluations/${evaluationId}/reset`, null, {
+    headers: this.getAuthHeaders()
+  });
+}
+  //  deleteEvaluation(evaluationId: number): Observable<any> {
+  //   return this.http.delete<any>(`${this.apiUrl}/api/evaluations/${evaluationId}`, {
+  //     headers: this.getAuthHeaders()
+  //   });
+  // }
 }

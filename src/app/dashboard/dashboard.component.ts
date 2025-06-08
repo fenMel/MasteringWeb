@@ -10,7 +10,7 @@ import { GestionFormationsComponent } from '../gestion-formations/gestion-format
 import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
 import { EvaluationService } from '../services/evaluation.service';
-
+import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
 import { ActivatedRoute } from '@angular/router';
 import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
 
@@ -26,7 +26,8 @@ import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.comp
     AjouterFormationComponent,
     SessionsFormationComponent,
     AjouterEvaluationComponent,
-    AjoutUtilisateurs
+    AjoutUtilisateurs,
+    GestionEvaluationComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']

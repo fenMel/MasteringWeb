@@ -44,27 +44,27 @@
     <div class="menu-item" [class.active]="activeMenu === 'tableau'">
       <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
     </div>
-    <div class="menu-item" [class.active]="activeMenu === 'candidats'">
-      <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
-    </div>
+    
     <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
       <a (click)="setActiveMenu('ajout_utilisateurs')">Ajouter un utilisateur</a>
+    </div>
+    <div class="menu-item" [class.active]="activeMenu === 'candidats'">
+      <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
     </div>
     <div class="menu-item" [class.active]="activeMenu === 'jurys'">
       <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
     </div>
-    <div class="menu-item" [class.active]="activeMenu === 'sessions'">
-      <a (click)="setActiveMenu('sessions')">Sessions d'évaluation</a>
+    <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
+      <a (click)="setActiveMenu('evaluations')">Gestion des evaluations</a>
     </div>
     <div class="menu-item" [class.active]="activeMenu === 'Formation'">
-      <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
+      <a (click)="setActiveMenu('ListeFormations')">Gestion fes formations</a>
     </div>
+    
     <div class="menu-item" [class.active]="activeMenu === 'Formation'">
       <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
     </div>
-    <div class="menu-item" [class.active]="activeMenu === 'statistiques'">
-      <a (click)="setActiveMenu('statistiques')">Statistiques</a>
-    </div>
+    
     <div class="menu-item" [class.active]="activeMenu === 'parametres'">
       <a (click)="setActiveMenu('parametres')">Paramètres</a>
     </div>
@@ -130,7 +130,7 @@
      <!-- Contenu principal pour coordinateur -->
 
      <div *ngIf="authService.isCoordinateur()" class="main-content">
-     <h1>Contenu du {{ activeMenu }}</h1>
+     <h1></h1>
 
      <ng-container *ngIf="activeMenu === 'ListeFormations'">
 
@@ -157,11 +157,22 @@
 
        <!-- Component pour l'ajout des utilisateurs -->
        <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">
-
-         <!-- Affiche le tableau -->
-        <ajout-utilisateurs></ajout-utilisateurs>
-
+         <ajout-utilisateurs></ajout-utilisateurs>
        </ng-container>
+    <ng-container *ngIf="activeMenu === 'evaluations'">
+
+         <app-gestion-evaluation
+            *ngIf="sousMenu === 'liste'"
+            [setSousMenu]="setSousMenu">
+          </app-gestion-evaluation>
+
+          <!-- Formulaire d'ajout d'évaluation -->
+          <app-ajouter-evaluation
+            *ngIf="sousMenu === 'ajouter-evaluation'"
+            [setSousMenu]="setSousMenu">
+          </app-ajouter-evaluation>
+        </ng-container>
+
   </div>
 
     <!-- Contenu principal simplifié pour candidat -->
