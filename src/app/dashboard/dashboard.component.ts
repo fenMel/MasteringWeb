@@ -1,15 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {AuthService} from '../services/auth.service';
-import {EvaluationComponent} from '../evaluation/evaluation.component';
-import {AjouterFormationComponent} from '../ajouter-formation/ajouter-formation.component';
-import {GestionFormationsComponent} from '../gestion-formations/gestion-formations.component';
-import {AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
-import {SessionsFormationComponent} from '../sessions-formation/sessions-formation.component';
-import {EvaluationService} from '../services/evaluation.service';
-import {AjoutUtilisateurs} from '../ajout-utilisateurs/ajout-utilisateurs.component';
+
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+// Importez votre composant d'évaluation
+import { EvaluationComponent } from '../evaluation/evaluation.component';
+import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formation.component';
+import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
+import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
+import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
+import { EvaluationService } from '../services/evaluation.service';
+import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
+import { ActivatedRoute } from '@angular/router';
+import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +27,8 @@ import {AjoutUtilisateurs} from '../ajout-utilisateurs/ajout-utilisateurs.compon
     AjouterFormationComponent,
     SessionsFormationComponent,
     AjouterEvaluationComponent,
-    AjoutUtilisateurs
+    AjoutUtilisateurs,
+    GestionEvaluationComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']

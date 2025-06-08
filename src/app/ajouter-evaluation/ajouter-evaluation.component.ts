@@ -82,7 +82,7 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private evaluationService: EvaluationService,
-    private authService: AuthService,
+    public authService: AuthService,
      private snackBar: MatSnackBar,
       private dialog: MatDialog
 
@@ -401,5 +401,36 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
   modifierEvaluation(): void {
     this.modeVoir = false;
     this.evaluationForm.enable();
+  }
+
+  supprimerEvaluation(): void {
+    if (!this.evaluationId) return;
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Confirmation',
+        message: 'Êtes-vous sûr de vouloir supprimer cette évaluation ? Cette action est irréversible.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+        console.log('Résultat du dialog:', result);
+
+      if (result === true) {
+          console.log('Suppression demandée pour evaluationId:', this.evaluationId);
+
+        this.evaluationService.resetEvaluation(this.evaluationId!).subscribe({
+          next: () => {
+            this.snackBar.open('Évaluation supprimée avec succès.', undefined, {
+              duration: 3000,
+              panelClass: 'snackbar-success'
+            });
+            this.retourListe();
+          },
+          error: (err) => {
+            console.error('Erreur lors de la suppression:', err);
+          }
+        });
+      }
+    });
   }
 }
