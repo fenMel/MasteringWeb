@@ -1,6 +1,6 @@
 <!-- Structure du tableau de bord adaptée à votre AuthService existant -->
 <div class="evaluation-container">
-  <!-- En-tête avec le logo Mastering et le titre du système -->
+  <!-- En-tête -->
   <header class="mastering-header">
     <div class="header-top">
       <h2>MASTERING</h2>
@@ -10,9 +10,41 @@
     </div>
   </header>
 
-  <!-- Conteneur principal avec sidebar -->
   <div class="content-wrapper">
-    <!-- Barre latérale gauche pour jury -->
+    <!-- Sidebar Coordinateur -->
+    <div class="sidebar" *ngIf="authService.isCoordinateur()">
+      <div class="sidebar-menu">
+        <div class="menu-item" [class.active]="activeMenu === 'tableau'">
+          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
+          <a (click)="setActiveMenu('ajout_utilisateurs')">Ajouter un utilisateur</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'candidats'">
+          <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'jurys'">
+          <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
+          <a (click)="setActiveMenu('evaluations')">Gestion des évaluations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
+          <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'ListeSessionsFormation'">
+          <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'parametres'">
+          <a (click)="setActiveMenu('parametres')">Paramètres</a>
+        </div>
+      </div>
+      <div class="logout-btn-container">
+        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
+      </div>
+    </div>
+
+    <!-- Sidebar Jury -->
     <div class="sidebar" *ngIf="authService.isJury()">
       <div class="sidebar-menu">
         <div class="menu-item" [class.active]="activeMenu === 'tableau'">
@@ -31,45 +63,12 @@
           <a (click)="setActiveMenu('parametres')">Paramètres</a>
         </div>
       </div>
-
       <div class="logout-btn-container">
         <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
       </div>
     </div>
 
- <!-- Nouvelle barre latérale pour coordinateur -->
- <div class="sidebar" *ngIf="authService.isCoordinateur()">
-  <div class="sidebar-menu">
-    <div class="menu-item" [class.active]="activeMenu === 'tableau'">
-      <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
-    </div>
-    
-    <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
-      <a (click)="setActiveMenu('ajout_utilisateurs')">Ajouter un utilisateur</a>
-    </div>
-    <div class="menu-item" [class.active]="activeMenu === 'candidats'">
-      <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
-    </div>
-    <div class="menu-item" [class.active]="activeMenu === 'jurys'">
-      <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
-    </div>
-    <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
-      <a (click)="setActiveMenu('evaluations')">Gestion des evaluations</a>
-    </div>
-  <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
-          <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
-        </div>
-    
-      <div class="menu-item" [class.active]="activeMenu === 'ListeSessionsFormation'">
-          <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
-        </div>
-    
-    <div class="menu-item" [class.active]="activeMenu === 'parametres'">
-      <a (click)="setActiveMenu('parametres')">Paramètres</a>
-
-    </div>
-
-    <!-- Nouvelle barre latérale pour candidat -->
+    <!-- Sidebar Candidat -->
     <div class="sidebar" *ngIf="authService.isCandidat()">
       <div class="sidebar-menu">
         <div class="menu-item" [class.active]="activeMenu === 'tableau'">
@@ -91,78 +90,43 @@
           <a (click)="setActiveMenu('messages')">Messages</a>
         </div>
       </div>
-
       <div class="logout-btn-container">
         <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
       </div>
     </div>
-
-    <!-- Contenu principal pour jury -->
-    <div *ngIf="authService.isJury()" class="main-content">
-      <ng-container *ngIf="activeMenu === 'soutenances'">
-        <!-- Liste des évaluations -->
-        <app-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-evaluation>
-
-        <!-- Formulaire d'ajout d'évaluation -->
-        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
-      </ng-container>
-    </div>
-
-     <!-- Contenu principal pour coordinateur -->
-
-     <div *ngIf="authService.isCoordinateur()" class="main-content">
-     <h1></h1>
-
-     <ng-container *ngIf="activeMenu === 'ListeFormations'">
-
-       <!-- Affiche le tableau -->
-       <app-gestion-formations
-         *ngIf="sousMenu === 'liste'"
-         [setSousMenu]="setSousMenu">
-       </app-gestion-formations>
-
 
     <!-- Contenu principal pour coordinateur -->
     <div *ngIf="authService.isCoordinateur()" class="main-content">
       <h1>Contenu du {{ activeMenu }}</h1>
 
       <ng-container *ngIf="activeMenu === 'ListeFormations'">
-        <!-- Affiche le tableau -->
         <app-gestion-formations *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-formations>
-
-        <!-- Affiche le formulaire d'ajout -->
         <app-ajouter-formation *ngIf="sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
       </ng-container>
 
       <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
-        <!-- Affiche le tableau -->
         <app-sessions-formation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-sessions-formation>
       </ng-container>
 
-    </ng-container>
+      <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">
+        <ajout-utilisateurs></ajout-utilisateurs>
+      </ng-container>
 
-       <!-- Component pour l'ajout des utilisateurs -->
-       <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">
-         <ajout-utilisateurs></ajout-utilisateurs>
-       </ng-container>
-    <ng-container *ngIf="activeMenu === 'evaluations'">
+      <ng-container *ngIf="activeMenu === 'evaluations'">
+        <app-gestion-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-evaluation>
+        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      </ng-container>
+    </div>
 
-         <app-gestion-evaluation
-            *ngIf="sousMenu === 'liste'"
-            [setSousMenu]="setSousMenu">
-          </app-gestion-evaluation>
+    <!-- Contenu principal pour jury -->
+    <div *ngIf="authService.isJury()" class="main-content">
+      <ng-container *ngIf="activeMenu === 'soutenances'">
+        <app-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-evaluation>
+        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      </ng-container>
+    </div>
 
-          <!-- Formulaire d'ajout d'évaluation -->
-          <app-ajouter-evaluation
-            *ngIf="sousMenu === 'ajouter-evaluation'"
-            [setSousMenu]="setSousMenu">
-          </app-ajouter-evaluation>
-        </ng-container>
-
-  </div>
-
-
-    <!-- Contenu principal simplifié pour candidat -->
+    <!-- Contenu principal pour candidat -->
     <div *ngIf="authService.isCandidat()" class="main-content">
       <h1>{{ activeMenu | titlecase }}</h1>
       <div [ngSwitch]="activeMenu">
