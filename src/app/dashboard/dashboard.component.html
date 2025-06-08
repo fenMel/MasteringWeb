@@ -6,7 +6,7 @@
       <h2>MASTERING</h2>
     </div>
     <div class="header-bottom">
-        <h2 class="system-title">{{ getRoleTitle() }}</h2>
+      <h2 class="system-title">{{ getRoleTitle() }}</h2>
     </div>
   </header>
 
@@ -19,7 +19,7 @@
           <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
-          <a (click)="setActiveMenu('soutenances')">Mes soutenances </a>
+          <a (click)="setActiveMenu('soutenances')">Mes soutenances</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
           <a (click)="setActiveMenu('evaluations')">Évaluations récentes</a>
@@ -33,11 +33,10 @@
       </div>
 
       <div class="logout-btn-container">
-        <button class="logout-btn" (click)="authService.logout()">
-          Se déconnecter
-        </button>
+        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
       </div>
     </div>
+
  <!-- Nouvelle barre latérale pour coordinateur -->
  <div class="sidebar" *ngIf="authService.isCoordinateur()">
   <div class="sidebar-menu">
@@ -57,25 +56,19 @@
     <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
       <a (click)="setActiveMenu('evaluations')">Gestion des evaluations</a>
     </div>
-    <div class="menu-item" [class.active]="activeMenu === 'Formation'">
-      <a (click)="setActiveMenu('ListeFormations')">Gestion fes formations</a>
-    </div>
+  <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
+          <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
+        </div>
     
-    <div class="menu-item" [class.active]="activeMenu === 'Formation'">
-      <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
-    </div>
+      <div class="menu-item" [class.active]="activeMenu === 'ListeSessionsFormation'">
+          <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
+        </div>
     
     <div class="menu-item" [class.active]="activeMenu === 'parametres'">
       <a (click)="setActiveMenu('parametres')">Paramètres</a>
-    </div>
-  </div>
 
-  <div class="logout-btn-container">
-    <button class="logout-btn" (click)="authService.logout()">
-      Se déconnecter
-    </button>
-  </div>
-</div>
+    </div>
+
     <!-- Nouvelle barre latérale pour candidat -->
     <div class="sidebar" *ngIf="authService.isCandidat()">
       <div class="sidebar-menu">
@@ -100,33 +93,21 @@
       </div>
 
       <div class="logout-btn-container">
-        <button class="logout-btn" (click)="authService.logout()">
-          Se déconnecter
-        </button>
+        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
       </div>
     </div>
 
     <!-- Contenu principal pour jury -->
     <div *ngIf="authService.isJury()" class="main-content">
-
       <ng-container *ngIf="activeMenu === 'soutenances'">
+        <!-- Liste des évaluations -->
+        <app-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-evaluation>
 
-          <!-- Liste des évaluations -->
-          <app-evaluation
-            *ngIf="sousMenu === 'liste'"
-            [setSousMenu]="setSousMenu">
-          </app-evaluation>
-
-          <!-- Formulaire d'ajout d'évaluation -->
-          <app-ajouter-evaluation
-            *ngIf="sousMenu === 'ajouter-evaluation'"
-            [setSousMenu]="setSousMenu">
-          </app-ajouter-evaluation>
-        </ng-container>
-
-
-
+        <!-- Formulaire d'ajout d'évaluation -->
+        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      </ng-container>
     </div>
+
      <!-- Contenu principal pour coordinateur -->
 
      <div *ngIf="authService.isCoordinateur()" class="main-content">
@@ -140,18 +121,23 @@
          [setSousMenu]="setSousMenu">
        </app-gestion-formations>
 
-       <!-- Affiche le formulaire d'ajout -->
-       <app-ajouter-formation *ngIf=" activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
-     </ng-container>
 
+    <!-- Contenu principal pour coordinateur -->
+    <div *ngIf="authService.isCoordinateur()" class="main-content">
+      <h1>Contenu du {{ activeMenu }}</h1>
 
-    <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
+      <ng-container *ngIf="activeMenu === 'ListeFormations'">
+        <!-- Affiche le tableau -->
+        <app-gestion-formations *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-formations>
 
-      <!-- Affiche le tableau -->
-      <app-sessions-formation
-        *ngIf="sousMenu === 'liste'"
-        [setSousMenu]="setSousMenu">
-      </app-sessions-formation>
+        <!-- Affiche le formulaire d'ajout -->
+        <app-ajouter-formation *ngIf="sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
+      </ng-container>
+
+      <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
+        <!-- Affiche le tableau -->
+        <app-sessions-formation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-sessions-formation>
+      </ng-container>
 
     </ng-container>
 
@@ -175,34 +161,46 @@
 
   </div>
 
+
     <!-- Contenu principal simplifié pour candidat -->
     <div *ngIf="authService.isCandidat()" class="main-content">
       <h1>{{ activeMenu | titlecase }}</h1>
-      <!-- Espace réservé pour le contenu spécifique à chaque page -->
       <div [ngSwitch]="activeMenu">
         <div *ngSwitchCase="'tableau'">
-          <!-- Placeholder pour le tableau de bord candidat -->
           <p>Contenu du tableau de bord candidat</p>
           <p *ngIf="authService.username">Bienvenue, {{ authService.username }}</p>
         </div>
         <div *ngSwitchCase="'profil'">
-          <!-- Placeholder pour la page de profil -->
           <p>Contenu de la page profil</p>
         </div>
         <div *ngSwitchCase="'projet'">
-          <!-- Placeholder pour la page projet -->
           <p>Contenu de la page projet</p>
         </div>
         <div *ngSwitchCase="'planification'">
-          <!-- Placeholder pour la page planification -->
           <p>Contenu de la page planification</p>
         </div>
         <div *ngSwitchCase="'resultats'">
-          <!-- Placeholder pour la page résultats -->
-          <p>Contenu de la page résultats</p>
+          <div class="section">
+            <h2 class="section-title">Mes résultats</h2>
+            <div *ngIf="evaluationResults; else noResults">
+              <div class="evaluation-results">
+                <div class="result-row" *ngFor="let evaluation of evaluationResults">
+                  <p><strong>Clarté :</strong> {{evaluation.noteClarte}}</p>
+                  <p><strong>Contenu :</strong> {{evaluation.noteContenu}}</p>
+                  <p><strong>Pertinence :</strong> {{evaluation.notePertinence}}</p>
+                  <p><strong>Présentation :</strong> {{evaluation.notePresentation}}</p>
+                  <p><strong>Réponses :</strong> {{evaluation.noteReponses}}</p>
+                  <p><em>Commentaire :</em> {{ evaluation.commentaire }}</p>
+                  <p><strong>Note finale :</strong> {{ evaluation.moyenne }}/20</p>
+                </div>
+              </div>
+            </div>
+            <ng-template #noResults>
+              <p>Aucun résultat disponible pour le moment.</p>
+            </ng-template>
+          </div>
         </div>
         <div *ngSwitchCase="'messages'">
-          <!-- Placeholder pour la page messages -->
           <p>Contenu de la page messages</p>
         </div>
       </div>
