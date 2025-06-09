@@ -32,3 +32,12 @@ button[mat-raised-button] {
 button[mat-raised-button]:hover {
   background: #0f2eb8;
 }
+
+.snackbar-success {
+  background-color: #43a047 !important; /* Vert Material */
+  color: #fff !important;
+}
+.snackbar-error {
+  background-color: #d32f2f !important; /* Rouge Material */
+  color: #fff !important;
+}

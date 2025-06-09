@@ -1,0 +1,199 @@
+// evaluation.component.scss
+.evaluations-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  
+  h2 {
+    color: #37474F;
+    margin-bottom: 20px;
+  }
+  
+  .filters-container {
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      span {
+        color: #607D8B;
+        margin-right: 5px;
+      }
+      
+      .dropdown {
+        select {
+          padding: 8px 12px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background-color: white;
+          min-width: 150px;
+        }
+      }
+      
+      .search-box {
+        position: relative;
+        flex-grow: 1;
+        max-width: 300px;
+        
+        input {
+          width: 100%;
+          padding: 8px 12px;
+          padding-right: 30px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+        }
+        
+        .clear-btn {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          font-size: 18px;
+          color: #999;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  
+  .table-container {
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      
+      th {
+        background-color: #f7f7f7;
+        color: #37474F;
+        font-weight: 600;
+      }
+      
+      tr:hover {
+        background-color: #f9f9f9;
+      }
+      
+      .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.85em;
+        
+        &.status-green {
+          background-color: #E8F5E9;
+          color: #2E7D32;
+        }
+        
+        &.status-red {
+          background-color: #FFEBEE;
+          color: #C62828;
+        }
+      }
+      
+      .btn-evaluate {
+        background-color: #42A5F5;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        
+        &:hover {
+          background-color: #2196F3;
+        }
+      }
+      
+      .btn-view {
+        background-color: #78909C;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        
+        &:hover {
+          background-color: #607D8B;
+        }
+      }
+    }
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    color: #607D8B;
+    
+    .pagination-controls {
+      display: flex;
+      gap: 5px;
+      
+      button {
+        min-width: 30px;
+        height: 30px;
+        border: 1px solid #ddd;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        
+        &.active {
+          background-color: #42A5F5;
+          color: white;
+          border-color: #42A5F5;
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.snackbar-success {
+  background-color: #43a047 !important; /* Vert Material */
+  color: #fff !important;
+}
+.snackbar-error {
+  background-color: #d32f2f !important; /* Rouge Material */
+  color: #fff !important;
+}
+
+.filter-dateheure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-dateheure input[type="time"] {
+  min-width: 120px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 1rem;
+}
+
+.filter-dateheure input[matinput] {
+  min-width: 160px;
+  height: 36px;
+  font-size: 1rem;
+}

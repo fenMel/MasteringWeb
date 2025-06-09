@@ -1,14 +1,20 @@
 export interface Evaluation {
-  juryId: any;
   id: number;
+  candidatId: number;
   candidat: { 
     nom: string;
     prenom: string;
   };
-  sujet: string;
+  jury: { 
+    nom: string;
+    prenom: string;
+  }; 
+  
 dateHeure:Date| null; // Modification ici
-  statut: 'Non Évalué' | 'Évalué';
-  candidatId: number;
+  sujet: string;
+  statut: string;
+  juryId?: number;
+
 }
 
 export interface FiltresEvaluation {

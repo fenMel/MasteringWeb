@@ -14,19 +14,18 @@
       <p><strong>Sujet:</strong> {{ candidat.sujet }}</p>
       <p>
         <strong>Date et heure:</strong>
-        {{ candidat.dateHeure | date:'short'  }}
+        {{ candidat.dateHeure | date:'dd/MM/yyyy HH:mm' }}
         <span *ngIf="candidat.salle">| <strong>Salle:</strong> {{ candidat.salle }}</span>
       </p>
       <button class="btn btn-primary" (click)="retourListe()">Retour à la liste</button>
     </div>
 
-    <h2 class="evaluation-title">Grille d'évaluation</h2>
-
     <form [formGroup]="evaluationForm" (ngSubmit)="validerEvaluation()">
       <div class="evaluation-grid">
         <div class="grid-header">
           <div class="cell header">Critère</div>
-          <div class="cell header note">Note /20</div>
+          <div class="cell header">Coefficient</div>
+          <div class="cell header">Note /20</div>
         </div>
 
         <div class="grid-row">
@@ -34,15 +33,13 @@
             <div class="critere-nom">Clarté</div>
             <div class="critere-description">Clarté et structure de la présentation</div>
           </div>
+          <div class="cell coef">
+            <input type="number" [value]="evaluationLoadedData?.coefClarte" readonly class="note-input">
+          </div>
           <div class="cell note">
-            <input
-              type="number"
-              formControlName="note_clarte"
-              min="0"
-              max="20"
-              (input)="mettreAJourNote()"
-              class="note-input">
-            <div *ngIf="evaluationForm.get('note_clarte')?.touched && evaluationForm.get('note_clarte')?.invalid" class="error-message">
+            <input type="number" formControlName="note_clarte" min="0" max="20" class="note-input">
+            <div *ngIf="evaluationForm.get('note_clarte')?.touched && evaluationForm.get('note_clarte')?.invalid"
+              class="error-message">
               Note requise (0-20)
             </div>
           </div>
@@ -53,15 +50,13 @@
             <div class="critere-nom">Contenu</div>
             <div class="critere-description">Qualité et pertinence du contenu</div>
           </div>
+          <div class="cell coef">
+            <input type="number" [value]="evaluationLoadedData?.coefContenu" readonly class="note-input">
+          </div>
           <div class="cell note">
-            <input
-              type="number"
-              formControlName="note_contenu"
-              min="0"
-              max="20"
-              (input)="mettreAJourNote()"
-              class="note-input">
-            <div *ngIf="evaluationForm.get('note_contenu')?.touched && evaluationForm.get('note_contenu')?.invalid" class="error-message">
+            <input type="number" formControlName="note_contenu" min="0" max="20" class="note-input">
+            <div *ngIf="evaluationForm.get('note_contenu')?.touched && evaluationForm.get('note_contenu')?.invalid"
+              class="error-message">
               Note requise (0-20)
             </div>
           </div>
@@ -72,15 +67,14 @@
             <div class="critere-nom">Pertinence</div>
             <div class="critere-description">Pertinence du sujet et des exemples</div>
           </div>
+          <div class="cell coef">
+            <input type="number" [value]="evaluationLoadedData?.coefPertinence" readonly class="note-input">
+          </div>
           <div class="cell note">
-            <input
-              type="number"
-              formControlName="note_pertinence"
-              min="0"
-              max="20"
-              (input)="mettreAJourNote()"
-              class="note-input">
-            <div *ngIf="evaluationForm.get('note_pertinence')?.touched && evaluationForm.get('note_pertinence')?.invalid" class="error-message">
+            <input type="number" formControlName="note_pertinence" min="0" max="20" class="note-input">
+            <div
+              *ngIf="evaluationForm.get('note_pertinence')?.touched && evaluationForm.get('note_pertinence')?.invalid"
+              class="error-message">
               Note requise (0-20)
             </div>
           </div>
@@ -91,15 +85,14 @@
             <div class="critere-nom">Présentation</div>
             <div class="critere-description">Qualité de la présentation visuelle</div>
           </div>
+          <div class="cell coef">
+            <input type="number" [value]="evaluationLoadedData?.coefPresentation" readonly class="note-input">
+          </div>
           <div class="cell note">
-            <input
-              type="number"
-              formControlName="note_presentation"
-              min="0"
-              max="20"
-              (input)="mettreAJourNote()"
-              class="note-input">
-            <div *ngIf="evaluationForm.get('note_presentation')?.touched && evaluationForm.get('note_presentation')?.invalid" class="error-message">
+            <input type="number" formControlName="note_presentation" min="0" max="20" class="note-input">
+            <div
+              *ngIf="evaluationForm.get('note_presentation')?.touched && evaluationForm.get('note_presentation')?.invalid"
+              class="error-message">
               Note requise (0-20)
             </div>
           </div>
@@ -110,15 +103,13 @@
             <div class="critere-nom">Réponses</div>
             <div class="critere-description">Qualité des réponses aux questions</div>
           </div>
+          <div class="cell coef">
+            <input type="number" [value]="evaluationLoadedData?.coefReponses" readonly class="note-input">
+          </div>
           <div class="cell note">
-            <input
-              type="number"
-              formControlName="note_reponses"
-              min="0"
-              max="20"
-              (input)="mettreAJourNote()"
-              class="note-input">
-            <div *ngIf="evaluationForm.get('note_reponses')?.touched && evaluationForm.get('note_reponses')?.invalid" class="error-message">
+            <input type="number" formControlName="note_reponses" min="0" max="20" class="note-input">
+            <div *ngIf="evaluationForm.get('note_reponses')?.touched && evaluationForm.get('note_reponses')?.invalid"
+              class="error-message">
               Note requise (0-20)
             </div>
           </div>
@@ -126,12 +117,10 @@
 
         <div class="commentaires-section">
           <h3>Commentaires</h3>
-          <textarea
-            formControlName="commentaire"
-            placeholder="Ajouter vos commentaires qualitatifs ici..."
-            rows="5"
+          <textarea formControlName="commentaire" placeholder="Ajouter vos commentaires qualitatifs ici..." rows="5"
             class="commentaires-textarea"></textarea>
-          <div *ngIf="evaluationForm.get('commentaire')?.touched && evaluationForm.get('commentaire')?.invalid" class="error-message">
+          <div *ngIf="evaluationForm.get('commentaire')?.touched && evaluationForm.get('commentaire')?.invalid"
+            class="error-message">
             Le commentaire est obligatoire (au moins 5 caractères).
           </div>
         </div>
@@ -142,9 +131,22 @@
           <span>Note finale : </span>
           <span class="note-value">{{ noteFinale }}/20</span>
         </div>
-
         <div class="action-buttons">
-          <button *ngIf="modeVoir" type="button" class="btn btn-modifier" (click)="modifierEvaluation()">Modifier</button>
+          <button *ngIf="modeVoir" type="button" class="btn btn-modifier"
+            (click)="modifierEvaluation()">Modifier</button>
+
+          <!-- Nouveau bouton de suppression amélioré -->
+          <button *ngIf="modeVoir && authService.isCoordinateur() && evaluationId" type="button" class="btn btn-annuler"
+            (click)="supprimerEvaluation()" [disabled]="isDeleting" [attr.aria-busy]="isDeleting"
+            title="Supprimer définitivement cette évaluation">
+            <span *ngIf="!isDeleting">
+              <i class="material-icons"></i> Supprimer l'évaluation
+            </span>
+            <span *ngIf="isDeleting">
+              <i class="material-icons rotating"></i> Suppression en cours...
+            </span>
+          </button>
+
           <ng-container *ngIf="!modeVoir">
             <button type="button" class="btn btn-annuler" (click)="annuler()">Annuler</button>
             <button type="submit" class="btn btn-valider">Valider l'évaluation</button>

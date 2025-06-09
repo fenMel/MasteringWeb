@@ -1,0 +1,89 @@
+<div class="evaluations-container">
+  <h2>Mes Soutenances</h2>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <span>Filtrer par :</span>
+      <div class="filter-dateheure">
+        <input matInput [matDatepicker]="picker" placeholder="Choisir une date" [(ngModel)]="filtres.date"
+          (dateChange)="appliquerFiltres()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <input type="time" [(ngModel)]="filtres.heure" (change)="appliquerFiltres()">
+      </div>
+
+      <div class="dropdown">
+        <select [(ngModel)]="filtres.statut" (change)="appliquerFiltres()">
+          <option *ngFor="let option of optionsStatut" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <div class="search-box">
+        <input type="text" [(ngModel)]="filtres.recherche" placeholder="Rechercher un candidat ou jury..."
+          (keyup.enter)="appliquerFiltres()">
+        <button *ngIf="filtres.recherche" class="clear-btn" (click)="filtres.recherche=''; appliquerFiltres()">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Candidat</th>
+          <th>Jury</th>
+          <th>Sujet</th>
+          <th>Date & Heure</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evaluation of evaluationsAffichees">
+          <td>{{ evaluation.candidat.nom }} {{ evaluation.candidat.prenom }}</td>
+          <td>{{ evaluation.jury.nom }} {{ evaluation.jury.prenom }}</td>
+          <td>
+            <span class="subject" [title]="evaluation.sujet">
+              {{ evaluation.sujet || 'Sujet non défini' }}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="evaluation.dateHeure; else noDate" class="date-time">
+              {{ evaluation.dateHeure | date:'dd/MM/yyyy - HH:mm' }}
+            </span>
+            <ng-template #noDate>
+              <span class="no-data">Date non définie</span>
+            </ng-template>
+          </td>
+          <td>
+            <span class="status" [ngClass]="evaluation.statut === 'Évalué' ? 'status-green' : 'status-red'">
+              {{ evaluation.statut }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-evaluate" *ngIf="evaluation.statut !== 'Évalué'" (click)="evaluer(evaluation)">
+              Évaluer
+            </button>
+
+            <button (click)="voirEvaluation(evaluation)" class="btn-view" *ngIf="evaluation.statut === 'Évalué'">
+              Voir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span>Affichage de
+      {{ (pageActuelle - 1) * evaluationsParPage + 1 }}-{{ Math.min(pageActuelle * evaluationsParPage, totalEvaluations) }}
+      sur {{ totalEvaluations }} évaluations</span>
+    <div class="pagination-controls">
+      <button [disabled]="pageActuelle === 1" (click)="changerPage(1)">«</button>
+      <button *ngFor="let page of pages" [class.active]="page === pageActuelle" (click)="changerPage(page)">
+        {{ page }}
+      </button>
+      <button [disabled]="pageActuelle === pages.length" (click)="changerPage(pages.length)">»</button>
+    </div>
+  </div>
+</div>
