@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit {
   activeMenu: string = 'tableau';
   sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
   evaluationId?: number; // Ajout d'une propriété pour stocker l'ID d'évaluation
+  sidebarOpen = false;
 
   constructor(
     public authService: AuthService,
@@ -105,6 +106,14 @@ export class DashboardComponent implements OnInit {
     this.sousMenu = menu;
     console.log("Sous-menu changé à:", menu);
   };
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+  }
 
   // Dans votre dashboard.component.ts
   getRoleTitle(): string {
