@@ -6,7 +6,7 @@ export interface Evaluation {
     prenom: string;
   };
   sujet: string;
-  dateHeure: Date;
+dateHeure:Date| null; // Modification ici
   statut: 'Non Évalué' | 'Évalué';
   candidatId: number;
 }

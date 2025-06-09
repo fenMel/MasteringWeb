@@ -4,10 +4,12 @@
     <div class="filters-container">
       <div class="filter-group">
         <span>Filtrer par :</span>
-        <div class="dropdown">
-          <select [(ngModel)]="filtres.dateRange" (change)="appliquerFiltres()">
-            <option *ngFor="let option of optionsDate" [value]="option">{{ option }}</option>
-          </select>
+        <div class="filter-dateheure">
+          <input matInput [matDatepicker]="picker" placeholder="Choisir une date"
+                 [(ngModel)]="filtres.date" (dateChange)="appliquerFiltres()">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <input type="time" [(ngModel)]="filtres.heure" (change)="appliquerFiltres()">
         </div>
         
         <div class="dropdown">

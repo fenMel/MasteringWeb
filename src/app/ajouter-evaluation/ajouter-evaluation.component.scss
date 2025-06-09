@@ -71,14 +71,12 @@
     background-color: #fff;
   }
   
-  .grid-header, .grid-row {
-    display: flex;
-    border-bottom: 1px solid #dee2e6;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-  }
+.grid-row, .grid-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr; /* Critère / Coef / Note */
+  align-items: center;
+}
+
   
   .grid-header {
     background-color: #e9ecef;
@@ -115,19 +113,30 @@
     }
   }
   
-  .note-input {
-   
-    padding: 8px;
-    text-align: center;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    
-    &:focus {
-      outline: none;
-      border-color: #80bdff;
-      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
+  .note-input, .coef-input {
+  width: 100px; // ou ajuste selon la largeur souhaitée
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
+
+  &[readonly] {
+    font-weight: bold;
+    color: #222;
+    background: #f8f9fa;
+    cursor: default;
+  }
+}
   
   .error-message {
     color: #dc3545;
@@ -219,3 +228,13 @@
   }
   .snackbar-success { background: #43a047; color: #fff; }
 .snackbar-error { background: #e53935; color: #fff; }
+
+
+.snackbar-success {
+  background-color: #43a047 !important; /* Vert Material */
+  color: #fff !important;
+}
+.snackbar-error {
+  background-color: #d32f2f !important; /* Rouge Material */
+  color: #fff !important;
+}

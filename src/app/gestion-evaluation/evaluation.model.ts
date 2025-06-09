@@ -9,8 +9,9 @@ export interface Evaluation {
     nom: string;
     prenom: string;
   }; 
+  
+dateHeure:Date| null; // Modification ici
   sujet: string;
-  dateHeure: Date;
   statut: string;
   juryId?: number;
 
