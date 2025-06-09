@@ -97,7 +97,7 @@
 
     <!-- Contenu principal pour coordinateur -->
     <div *ngIf="authService.isCoordinateur()" class="main-content">
-      <h1>Contenu du {{ activeMenu }}</h1>
+     
 
       <ng-container *ngIf="activeMenu === 'ListeFormations'">
         <app-gestion-formations *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-formations>

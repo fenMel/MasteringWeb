@@ -17,7 +17,7 @@
     .filter-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 16px;
       flex-wrap: wrap;
       
       span {
@@ -167,6 +167,25 @@
           cursor: not-allowed;
         }
       }
+    }
+  }
+  
+  .filter-dateheure {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    input[type="time"] {
+      min-width: 120px;
+      height: 36px;
+      padding: 0 8px;
+      font-size: 1rem;
+    }
+    
+    input[matinput] {
+      min-width: 160px;
+      height: 36px;
+      font-size: 1rem;
     }
   }
 }

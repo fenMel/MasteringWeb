@@ -17,8 +17,7 @@
     .filter-group {
       display: flex;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 16px;
       
       span {
         color: #607D8B;
@@ -169,4 +168,32 @@
       }
     }
   }
+}
+
+.snackbar-success {
+  background-color: #43a047 !important; /* Vert Material */
+  color: #fff !important;
+}
+.snackbar-error {
+  background-color: #d32f2f !important; /* Rouge Material */
+  color: #fff !important;
+}
+
+.filter-dateheure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-dateheure input[type="time"] {
+  min-width: 120px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 1rem;
+}
+
+.filter-dateheure input[matinput] {
+  min-width: 160px;
+  height: 36px;
+  font-size: 1rem;
 }

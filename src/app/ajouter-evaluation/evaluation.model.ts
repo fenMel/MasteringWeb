@@ -8,6 +8,17 @@ export interface Evaluation {
   dateHeure: Date;
   statut: 'Non Évalué' | 'Évalué';
   candidatId: number;
+  coefClarte?: number;
+  coefContenu?: number;
+  coefPertinence?: number;
+  coefPresentation?: number;
+  coefReponses?: number;
+}
+interface Critere {
+  id: number;
+  nom: string;
+  description: string;
+  coefficient: number;
 }
 
 export interface FiltresEvaluation {

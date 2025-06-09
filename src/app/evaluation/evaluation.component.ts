@@ -1,7 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { Evaluation, FiltresEvaluation } from './evaluation.model';
 import { EvaluationService } from '../services/evaluation.service';
@@ -9,7 +15,12 @@ import { EvaluationService } from '../services/evaluation.service';
 @Component({
   standalone: true,
   selector: 'app-evaluation',
-  imports: [ CommonModule, FormsModule ],
+  imports: [ CommonModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+    MatFormFieldModule ],
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.scss']
 })
@@ -23,8 +34,9 @@ export class EvaluationComponent implements OnInit {
 
   @Input() setSousMenu!: (menu: string) => void;
 
-  filtres: FiltresEvaluation = {
-    dateRange: 'Toutes les dates',
+  filtres: any = {
+    date: null,   // Date sélectionnée
+    heure: '',    // Heure sélectionnée (format 'HH:mm')
     statut: 'Tout les statuts',
     candidat: ''
   };
@@ -84,6 +96,9 @@ export class EvaluationComponent implements OnInit {
                     : { nom: 'Nom inconnu', prenom: 'Prénom inconnu' },
                   sujet: evaluation.sujet || 'Sujet non spécifié',
                   dateHeure: evaluation.dateHeure ? new Date(evaluation.dateHeure) : new Date(),
+                  // Ajoute ici pour accès direct dans le template :
+                  date: evaluation.dateHeure ? new Date(evaluation.dateHeure).toLocaleDateString() : '',
+                  heure: evaluation.dateHeure ? new Date(evaluation.dateHeure).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
                   statut: evaluation.moyenne ? 'Évalué' : 'Non Évalué',
                   juryId: evaluation.juryId ?? evaluation.jury?.id ?? null // Ajout du juryId pour le filtre
                 };
@@ -121,7 +136,29 @@ export class EvaluationComponent implements OnInit {
     const juryId = currentUser?.id;
 
     let filtered = this.evaluations;
+  if (this.filtres.date) {
+      filtered = filtered.filter(e => {
+        if (!e.dateHeure) return false;
+        const evalDate = new Date(e.dateHeure);
+        const filtreDate = new Date(this.filtres.date);
+        return evalDate.getFullYear() === filtreDate.getFullYear() &&
+               evalDate.getMonth() === filtreDate.getMonth() &&
+               evalDate.getDate() === filtreDate.getDate();
+      });
+    }
 
+ 
+
+    // 4. Filtre par heure
+    if (this.filtres.heure) {
+      filtered = filtered.filter(e => {
+        const evalDate = e.dateHeure ? new Date(e.dateHeure) : null;
+        const heure = this.filtres.heure;
+        return evalDate &&
+          evalDate.getHours().toString().padStart(2, '0') + ':' +
+          evalDate.getMinutes().toString().padStart(2, '0') === heure;
+      });
+    }
     // 2. Filtre par jury connecté
     if (juryId) {
       filtered = filtered.filter(e => e.juryId === juryId);
@@ -140,11 +177,12 @@ export class EvaluationComponent implements OnInit {
         (e.candidat.prenom + ' ' + e.candidat.nom).toLowerCase().includes(search)
       );
     }
+  this.totalEvaluations = filtered.length;
 
     // 5. Pagination
     const debut = (this.pageActuelle - 1) * this.evaluationsParPage;
-    const fin = debut + this.evaluationsParPage;
-    return filtered.slice(debut, fin);
+const fin = debut + this.evaluationsParPage;
+return filtered.slice(debut, fin);
   }
 
   get pages(): number[] {
