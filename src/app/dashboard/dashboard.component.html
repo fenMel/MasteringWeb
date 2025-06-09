@@ -1,170 +1,196 @@
-<!-- Structure du tableau de bord adaptée à votre AuthService existant -->
 <div class="evaluation-container">
-  <!-- En-tête -->
+  <!-- Header with hamburger menu -->
   <header class="mastering-header">
     <div class="header-top">
       <h2>MASTERING</h2>
+      <button class="hamburger" (click)="toggleSidebar()">☰</button>
     </div>
     <div class="header-bottom">
       <h2 class="system-title">{{ getRoleTitle() }}</h2>
     </div>
   </header>
 
-  <div class="content-wrapper">
-    <!-- Sidebar Coordinateur -->
-    <div class="sidebar" *ngIf="authService.isCoordinateur()">
-      <div class="sidebar-menu">
-        <div class="menu-item" [class.active]="activeMenu === 'tableau'">
-          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
-          <a (click)="setActiveMenu('ajout_utilisateurs')">Ajouter un utilisateur</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'candidats'">
-          <a (click)="setActiveMenu('candidats')">Gestion des candidats</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'jurys'">
-          <a (click)="setActiveMenu('jurys')">Gestion des jurys</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
-          <a (click)="setActiveMenu('evaluations')">Gestion des évaluations</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
-          <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'ListeSessionsFormation'">
-          <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
-        </div>
-        <div class="menu-item" [class.active]="activeMenu === 'parametres'">
-          <a (click)="setActiveMenu('parametres')">Paramètres</a>
-        </div>
-      </div>
-      <div class="logout-btn-container">
-        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
-      </div>
-    </div>
+  <!-- Mobile menu overlay -->
+  <div class="mobile-menu-overlay" [class.open]="sidebarOpen" (click)="closeSidebar()"></div>
 
-    <!-- Sidebar Jury -->
-    <div class="sidebar" *ngIf="authService.isJury()">
+  <!-- Main content wrapper -->
+  <div class="content-wrapper">
+    <!-- Sidebar for jury -->
+    <div class="sidebar" [class.open]="sidebarOpen" *ngIf="authService.isJury()">
       <div class="sidebar-menu">
         <div class="menu-item" [class.active]="activeMenu === 'tableau'">
-          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+          <a (click)="setActiveMenu('tableau'); closeSidebar()">Tableau de bord</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'soutenances'">
-          <a (click)="setActiveMenu('soutenances')">Mes soutenances</a>
+          <a (click)="setActiveMenu('soutenances'); closeSidebar()">Mes soutenances</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
-          <a (click)="setActiveMenu('evaluations')">Évaluations récentes</a>
+          <a (click)="setActiveMenu('evaluations'); closeSidebar()">Évaluations récentes</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'deliberations'">
-          <a (click)="setActiveMenu('deliberations')">Délibérations</a>
+          <a (click)="setActiveMenu('deliberations'); closeSidebar()">Délibérations</a>
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'parametres'">
-          <a (click)="setActiveMenu('parametres')">Paramètres</a>
+          <a (click)="setActiveMenu('parametres'); closeSidebar()">Paramètres</a>
         </div>
       </div>
+
       <div class="logout-btn-container">
-        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
+        <button class="logout-btn" (click)="authService.logout()">
+          Se déconnecter
+        </button>
       </div>
     </div>
 
-    <!-- Sidebar Candidat -->
-    <div class="sidebar" *ngIf="authService.isCandidat()">
+    <!-- Sidebar for coordinator -->
+    <div class="sidebar" [class.open]="sidebarOpen" *ngIf="authService.isCoordinateur()">
       <div class="sidebar-menu">
         <div class="menu-item" [class.active]="activeMenu === 'tableau'">
-          <a (click)="setActiveMenu('tableau')">Tableau de bord</a>
+          <a (click)="setActiveMenu('tableau'); closeSidebar()">Tableau de bord</a>
         </div>
-        <div class="menu-item" [class.active]="activeMenu === 'profil'">
-          <a (click)="setActiveMenu('profil')">Mon profil</a>
+        <div class="menu-item" [class.active]="activeMenu === 'candidats'">
+          <a (click)="setActiveMenu('candidats'); closeSidebar()">Gestion des candidats</a>
         </div>
-        <div class="menu-item" [class.active]="activeMenu === 'projet'">
-          <a (click)="setActiveMenu('projet')">Mon projet</a>
+        <div class="menu-item" [class.active]="activeMenu === 'ajout_utilisateurs'">
+          <a (click)="setActiveMenu('ajout_utilisateurs'); closeSidebar()">Ajouter un utilisateur</a>
         </div>
-        <div class="menu-item" [class.active]="activeMenu === 'planification'">
-          <a (click)="setActiveMenu('planification')">Planification</a>
+        <div class="menu-item" [class.active]="activeMenu === 'jurys'">
+          <a (click)="setActiveMenu('jurys'); closeSidebar()">Gestion des jurys</a>
         </div>
-        <div class="menu-item" [class.active]="activeMenu === 'resultats'">
-          <a (click)="setActiveMenu('resultats')">Mes résultats</a>
+        <div class="menu-item" [class.active]="activeMenu === 'sessions'">
+          <a (click)="setActiveMenu('sessions'); closeSidebar()">Sessions d'évaluation</a>
         </div>
-        <div class="menu-item" [class.active]="activeMenu === 'messages'">
-          <a (click)="setActiveMenu('messages')">Messages</a>
+        <div class="menu-item" [class.active]="activeMenu === 'Formation'">
+          <a (click)="setActiveMenu('ListeFormations'); closeSidebar()">Gérer les formations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'Formation'">
+          <a (click)="setActiveMenu('ListeSessionsFormation'); closeSidebar()">Sessions de formations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'statistiques'">
+          <a (click)="setActiveMenu('statistiques'); closeSidebar()">Statistiques</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'parametres'">
+          <a (click)="setActiveMenu('parametres'); closeSidebar()">Paramètres</a>
         </div>
       </div>
+
       <div class="logout-btn-container">
-        <button class="logout-btn" (click)="authService.logout()">Se déconnecter</button>
+        <button class="logout-btn" (click)="authService.logout()">
+          Se déconnecter
+        </button>
       </div>
     </div>
 
-    <!-- Contenu principal pour coordinateur -->
+    <!-- Sidebar for candidate -->
+    <div class="sidebar" [class.open]="sidebarOpen" *ngIf="authService.isCandidat()">
+      <div class="sidebar-menu">
+        <div class="menu-item" [class.active]="activeMenu === 'tableau'">
+          <a (click)="setActiveMenu('tableau'); closeSidebar()">Tableau de bord</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'profil'">
+          <a (click)="setActiveMenu('profil'); closeSidebar()">Mon profil</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'projet'">
+          <a (click)="setActiveMenu('projet'); closeSidebar()">Mon projet</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'planification'">
+          <a (click)="setActiveMenu('planification'); closeSidebar()">Planification</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'resultats'">
+          <a (click)="setActiveMenu('resultats'); closeSidebar()">Mes résultats</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'messages'">
+          <a (click)="setActiveMenu('messages'); closeSidebar()">Messages</a>
+        </div>
+      </div>
+
+      <div class="logout-btn-container">
+        <button class="logout-btn" (click)="authService.logout()">
+          Se déconnecter
+        </button>
+      </div>
+    </div>
+
+    <!-- Main content for jury -->
+    <div *ngIf="authService.isJury()" class="main-content">
+      <ng-container *ngIf="activeMenu === 'soutenances'">
+        <!-- Liste des évaluations -->
+        <app-evaluation
+          *ngIf="sousMenu === 'liste'"
+          [setSousMenu]="setSousMenu">
+        </app-evaluation>
+
+        <!-- Formulaire d'ajout d'évaluation -->
+        <app-ajouter-evaluation
+          *ngIf="sousMenu === 'ajouter-evaluation'"
+          [setSousMenu]="setSousMenu">
+        </app-ajouter-evaluation>
+      </ng-container>
+    </div>
+
+    <!-- Main content for coordinator -->
     <div *ngIf="authService.isCoordinateur()" class="main-content">
-     
+      <h1>Contenu du {{ activeMenu }}</h1>
 
       <ng-container *ngIf="activeMenu === 'ListeFormations'">
-        <app-gestion-formations *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-formations>
-        <app-ajouter-formation *ngIf="sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
+        <!-- Affiche le tableau -->
+        <app-gestion-formations
+          *ngIf="sousMenu === 'liste'"
+          [setSousMenu]="setSousMenu">
+        </app-gestion-formations>
+
+        <!-- Affiche le formulaire d'ajout -->
+        <app-ajouter-formation *ngIf="activeMenu === 'ListeFormations' && sousMenu === 'ajouter'" [setSousMenu]="setSousMenu"></app-ajouter-formation>
       </ng-container>
 
       <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
-        <app-sessions-formation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-sessions-formation>
+        <!-- Affiche le tableau -->
+        <app-sessions-formation
+          *ngIf="sousMenu === 'liste'"
+          [setSousMenu]="setSousMenu">
+        </app-sessions-formation>
       </ng-container>
 
+      <!-- Component pour l'ajout des utilisateurs -->
       <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">
+        <!-- Affiche le tableau -->
         <ajout-utilisateurs></ajout-utilisateurs>
       </ng-container>
 
-      <ng-container *ngIf="activeMenu === 'evaluations'">
-        <app-gestion-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-evaluation>
-        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      <ng-container *ngIf="activeMenu === 'tableau'">
+        <!-- Affiche le tableau -->
+        <app-users-list></app-users-list>
       </ng-container>
     </div>
 
-    <!-- Contenu principal pour jury -->
-    <div *ngIf="authService.isJury()" class="main-content">
-      <ng-container *ngIf="activeMenu === 'soutenances'">
-        <app-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-evaluation>
-        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
-      </ng-container>
-    </div>
-
-    <!-- Contenu principal pour candidat -->
+    <!-- Main content for candidate -->
     <div *ngIf="authService.isCandidat()" class="main-content">
       <h1>{{ activeMenu | titlecase }}</h1>
+      <!-- Espace réservé pour le contenu spécifique à chaque page -->
       <div [ngSwitch]="activeMenu">
         <div *ngSwitchCase="'tableau'">
+          <!-- Placeholder pour le tableau de bord candidat -->
           <p>Contenu du tableau de bord candidat</p>
           <p *ngIf="authService.username">Bienvenue, {{ authService.username }}</p>
         </div>
         <div *ngSwitchCase="'profil'">
+          <!-- Placeholder pour la page de profil -->
           <p>Contenu de la page profil</p>
         </div>
         <div *ngSwitchCase="'projet'">
+          <!-- Placeholder pour la page projet -->
           <p>Contenu de la page projet</p>
         </div>
         <div *ngSwitchCase="'planification'">
+          <!-- Placeholder pour la page planification -->
           <p>Contenu de la page planification</p>
         </div>
         <div *ngSwitchCase="'resultats'">
-          <div class="section">
-            <h2 class="section-title">Mes résultats</h2>
-            <div *ngIf="evaluationResults; else noResults">
-              <div class="evaluation-results">
-                <div class="result-row" *ngFor="let evaluation of evaluationResults">
-                  <p><strong>Clarté :</strong> {{evaluation.noteClarte}}</p>
-                  <p><strong>Contenu :</strong> {{evaluation.noteContenu}}</p>
-                  <p><strong>Pertinence :</strong> {{evaluation.notePertinence}}</p>
-                  <p><strong>Présentation :</strong> {{evaluation.notePresentation}}</p>
-                  <p><strong>Réponses :</strong> {{evaluation.noteReponses}}</p>
-                  <p><em>Commentaire :</em> {{ evaluation.commentaire }}</p>
-                  <p><strong>Note finale :</strong> {{ evaluation.moyenne }}/20</p>
-                </div>
-              </div>
-            </div>
-            <ng-template #noResults>
-              <p>Aucun résultat disponible pour le moment.</p>
-            </ng-template>
-          </div>
+          <!-- Placeholder pour la page résultats -->
+          <p>Contenu de la page résultats</p>
         </div>
         <div *ngSwitchCase="'messages'">
+          <!-- Placeholder pour la page messages -->
           <p>Contenu de la page messages</p>
         </div>
       </div>

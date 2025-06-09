@@ -1,4 +1,3 @@
-
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,9 +10,10 @@ import { GestionFormationsComponent } from '../gestion-formations/gestion-format
 import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
 import { EvaluationService } from '../services/evaluation.service';
-import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
+
 import { ActivatedRoute } from '@angular/router';
 import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
+import {UsersListComponent} from '../user-list/user-list.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +28,7 @@ import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.comp
     SessionsFormationComponent,
     AjouterEvaluationComponent,
     AjoutUtilisateurs,
-    GestionEvaluationComponent
+    UsersListComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -37,26 +37,28 @@ export class DashboardComponent implements OnInit {
   activeMenu: string = 'tableau';
   sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
   evaluationId?: number; // Ajout d'une propriété pour stocker l'ID d'évaluation
-  evaluationResults: any = null; // Stocker les résultats d'évaluation
+  sidebarOpen = false;
 
   constructor(
     public authService: AuthService,
     private route: ActivatedRoute,
     private evaluationService: EvaluationService
-  ) {}
+
+  ) { }
 
   ngOnInit(): void {
-    // Décoder le token pour accéder aux rôles et au nom d'utilisateur
+    // S'assurer que le token est décodé pour accéder aux rôles et au nom d'utilisateur
     this.authService.decodeMyToken();
 
     // Affichage des informations de débogage
     console.log("Rôle JURY:", this.authService.isJury());
     console.log("Rôle CANDIDAT:", this.authService.isCandidat());
-    console.log("Rôle COORDINATEUR:", this.authService.isCoordinateur());
+    console.log("Rôle CORDINATEUR:", this.authService.isCoordinateur());
     console.log("Utilisateur connecté:", this.authService.isConnected());
     console.log("Nom d'utilisateur:", this.authService.username);
 
-    // Redirection si l'utilisateur n'est pas connecté
+    // Si l'utilisateur n'est pas connecté, le authService.logout() dans votre service
+    // devrait déjà gérer la redirection vers la page de connexion
     if (!this.authService.isConnected()) {
       console.log("L'utilisateur n'est pas connecté, redirection en cours...");
     }
@@ -68,35 +70,20 @@ export class DashboardComponent implements OnInit {
         console.log("Menu actif (via URL) :", this.activeMenu);
       }
 
+      // Vérifiez si le sous-menu est spécifié dans les paramètres de la requête
       if (params['sousMenu']) {
         this.sousMenu = params['sousMenu'];
         console.log("Sous-menu actif (via URL) :", this.sousMenu);
       }
 
+      // Récupérer l'ID d'évaluation si présent
       if (params['id']) {
-        this.evaluationId = +params['id']; // Convertir en nombre
+        this.evaluationId = +params['id']; // Le + convertit en nombre
         console.log("ID d'évaluation (via URL) :", this.evaluationId);
       }
     });
-
-    // Récupérer les résultats d'évaluation si l'utilisateur est un candidat
-    if (this.authService.isCandidat()) {
-      const currentUser = this.authService.getCurrentUser();
-      if (currentUser && currentUser.id) {
-        this.evaluationService.getEvaluationForCandidat(currentUser.id).subscribe({
-          next: (results: any[]) => { // Explicitly type 'results'
-            console.log("Résultats récupérés :", results);
-            this.evaluationResults = results;
-          },
-          error: (err: Error) => { // Explicitly type 'err'
-            console.error("Erreur lors de la récupération des résultats d'évaluation:", err);
-          }
-        });
-      }
-    }
   }
-
-  evaluer(evaluation: any): void {
+  evaluer(evaluation: any) {
     console.log('Évaluer cette évaluation:', evaluation);
 
     this.evaluationService.setSelectedEvaluationId(evaluation.id);
@@ -105,6 +92,8 @@ export class DashboardComponent implements OnInit {
     this.activeMenu = 'soutenances';
     this.sousMenu = 'ajouter-evaluation';
   }
+
+
 
   setActiveMenu = (menu: string): void => {
     this.activeMenu = menu;
@@ -118,6 +107,15 @@ export class DashboardComponent implements OnInit {
     console.log("Sous-menu changé à:", menu);
   };
 
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+  }
+
+  // Dans votre dashboard.component.ts
   getRoleTitle(): string {
     if (this.authService.isJury()) {
       return "Espace Jury";
