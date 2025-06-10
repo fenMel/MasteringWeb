@@ -6,9 +6,7 @@ import { environment } from '../../environments/environment.prod';
 import { AuthService } from './auth.service';
 import { Decision } from '../decision/decision.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class DecisionService {
   private apiUrl = environment.apiUrl;
 

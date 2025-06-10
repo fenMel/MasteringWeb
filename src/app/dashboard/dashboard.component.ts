@@ -1,25 +1,23 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-// Importez votre composant d'évaluation
+import { EvaluationService } from '../services/evaluation.service';
+import { DecisionService } from '../services/decision.service';
+
 import { EvaluationComponent } from '../evaluation/evaluation.component';
 import { AjouterFormationComponent } from '../ajouter-formation/ajouter-formation.component';
 import { GestionFormationsComponent } from '../gestion-formations/gestion-formations.component';
-import { AjouterEvaluationComponent} from '../ajouter-evaluation/ajouter-evaluation.component';
+import { AjouterEvaluationComponent } from '../ajouter-evaluation/ajouter-evaluation.component';
 import { SessionsFormationComponent } from '../sessions-formation/sessions-formation.component';
-import { EvaluationService } from '../services/evaluation.service';
-
-import { ActivatedRoute } from '@angular/router';
-import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
-
+import { AjoutUtilisateurs } from '../ajout-utilisateurs/ajout-utilisateurs.component';
 import { DecisionComponent } from '../decision/decision.component';
 import { VoirDecisionComponent } from '../voir-decision/voir-decision.component';
 import { Decision } from '../decision/decision.model';
-
-import {UsersListComponent} from '../user-list/user-list.component';
-
+import { UsersListComponent } from '../user-list/user-list.component';
+import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
+import { CandidatDecisionComponent } from '../candidat-decision/candidat-decision.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,13 +32,11 @@ import {UsersListComponent} from '../user-list/user-list.component';
     SessionsFormationComponent,
     AjouterEvaluationComponent,
     AjoutUtilisateurs,
-
     GestionEvaluationComponent,
     DecisionComponent,
-    VoirDecisionComponent
-
-    UsersListComponent
-
+    VoirDecisionComponent,
+    UsersListComponent,
+    CandidatDecisionComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -48,19 +44,16 @@ import {UsersListComponent} from '../user-list/user-list.component';
 export class DashboardComponent implements OnInit {
   activeMenu: string = 'tableau';
   sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
-  evaluationId?: number; // Ajout d'une propriété pour stocker l'ID d'évaluation
-
-  evaluationResults: any = null; // Stocker les résultats d'évaluation
+  evaluationId?: number;
+  evaluationResults: any = null;
   decisionSelectionnee: Decision | null = null;
-
   sidebarOpen = false;
-
 
   constructor(
     public authService: AuthService,
     private route: ActivatedRoute,
-    private evaluationService: EvaluationService
-
+    private evaluationService: EvaluationService,
+    private decisionService: DecisionService
   ) { }
 
   ngOnInit(): void {
@@ -74,47 +67,47 @@ export class DashboardComponent implements OnInit {
     console.log("Utilisateur connecté:", this.authService.isConnected());
     console.log("Nom d'utilisateur:", this.authService.username);
 
-    // Si l'utilisateur n'est pas connecté, le authService.logout() dans votre service
-    // devrait déjà gérer la redirection vers la page de connexion
     if (!this.authService.isConnected()) {
       console.log("L'utilisateur n'est pas connecté, redirection en cours...");
     }
 
-    // Récupérer les paramètres de la route pour définir le menu actif et le sous-menu
     this.route.queryParams.subscribe((params: any) => {
       if (params['menu']) {
         this.activeMenu = params['menu'];
         console.log("Menu actif (via URL) :", this.activeMenu);
       }
 
-      // Vérifiez si le sous-menu est spécifié dans les paramètres de la requête
       if (params['sousMenu']) {
         this.sousMenu = params['sousMenu'];
         console.log("Sous-menu actif (via URL) :", this.sousMenu);
       }
 
-      // Récupérer l'ID d'évaluation si présent
       if (params['id']) {
-        this.evaluationId = +params['id']; // Le + convertit en nombre
+        this.evaluationId = +params['id'];
         console.log("ID d'évaluation (via URL) :", this.evaluationId);
       }
     });
   }
-  evaluer(evaluation: any) {
-    console.log('Évaluer cette évaluation:', evaluation);
 
+  evaluer(evaluation: any): void {
+    console.log('Évaluer cette évaluation:', evaluation);
     this.evaluationService.setSelectedEvaluationId(evaluation.id);
     this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
-
     this.activeMenu = 'soutenances';
     this.sousMenu = 'ajouter-evaluation';
   }
 
-
-
   setActiveMenu = (menu: string): void => {
     this.activeMenu = menu;
-    if (menu === 'ListeFormations' || menu === 'ListeSessionsFormation') {
+    // Ajoute ici tous les menus qui doivent afficher la liste par défaut
+    if (
+      menu === 'ListeFormations' ||
+      menu === 'ListeSessionsFormation' ||
+      menu === 'resultats' ||
+      menu === 'soutenances' ||
+      menu === 'evaluations' ||
+      menu === 'decision'
+    ) {
       this.sousMenu = 'liste';
     }
   };
@@ -134,7 +127,6 @@ export class DashboardComponent implements OnInit {
     this.sidebarOpen = false;
   }
 
-  // Dans votre dashboard.component.ts
   getRoleTitle(): string {
     if (this.authService.isJury()) {
       return "Espace Jury";
