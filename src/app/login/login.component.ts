@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -33,11 +34,11 @@ export class LoginComponent implements OnInit {
           this.authService.saveTokenInSessionStorage(res);
           this.dashboardMod1();
         } else {
-          this.errorMessage = 'Invalid username or password';
+          this.errorMessage = 'Address email ou mot de passe incorrect';
         }
       },
       error: (err) => {
-        this.errorMessage = 'Invalid username or password';
+        this.errorMessage = 'Identifiants incorrectes';
         this.isLoading = false;
       },
       complete: () => {
@@ -70,7 +71,7 @@ export class LoginComponent implements OnInit {
     } else if (roles.some((role: any) => role.authority === 'SUPPORT_STAFF')) {
       this.router.navigate(['/dashboard/support']);
     } else {
-      this.errorMessage = 'Invalid role';
+      this.errorMessage = 'Le rôle est invalide';
       this.authService.logout();
     }
   }

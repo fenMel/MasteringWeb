@@ -1,0 +1,34 @@
+<div class="voir-decision-container">
+  <button class="btn-retour" (click)="setSousMenu('liste')">← Retour</button>
+
+  <table class="decision-table">
+    <thead>
+      <tr>
+        <th>Candidat</th>
+        <th>Jury</th>
+        <th>Note finale</th>
+        <th>Commentaire</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let evaluation of evaluationResults">
+        <td>{{ evaluation.candidat?.prenom }} {{ evaluation.candidat?.nom }}</td>
+        <td>{{ evaluation.jury?.prenom }} {{ evaluation.jury?.nom }}</td>
+        <td>
+          {{ evaluation.evaluation?.moyenne != null ? (evaluation.evaluation.moyenne + '/20') : 'Non Évalué' }}
+        </td>
+        <td>{{ evaluation.commentaire_final || evaluation.commentaireFinal || 'Aucun' }}</td>
+        <td>
+          <span [ngClass]="{
+            'status-green': evaluation.verdict === 'ADMIS',
+            'status-red': evaluation.verdict === 'NON_ADMIS',
+            'status-blue': evaluation.verdict === 'RATTRAPAGE'
+          }">
+            {{ evaluation.evaluation?.moyenne != null ? (evaluation.verdict || 'Non défini') : 'Non Évalué' }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

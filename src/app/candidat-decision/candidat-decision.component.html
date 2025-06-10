@@ -1,0 +1,20 @@
+<div class="section">
+  <h2 class="section-title">Mes résultats</h2>
+  <div *ngIf="evaluationResults?.length; else noResults">
+    <div class="evaluation-results">
+      <div class="result-row" *ngFor="let evaluation of evaluationResults">
+        <p><strong>Clarté :</strong> {{evaluation.noteClarte}}</p>
+        <p><strong>Contenu :</strong> {{evaluation.noteContenu}}</p>
+        <p><strong>Pertinence :</strong> {{evaluation.notePertinence}}</p>
+        <p><strong>Présentation :</strong> {{evaluation.notePresentation}}</p>
+        <p><strong>Réponses :</strong> {{evaluation.noteReponses}}</p>
+        <p><em>Commentaire :</em> {{ evaluation.commentaire }}</p>
+        <p><strong>Note finale :</strong> {{ evaluation.moyenne }}/20</p>
+        <p class="verdict"><strong>Verdict :</strong> {{ evaluation.verdict }}</p>
+      </div>
+    </div>
+  </div>
+  <ng-template #noResults>
+    <p class="no-results">Aucun résultat d'évaluation trouvé.</p>
+  </ng-template>
+</div>

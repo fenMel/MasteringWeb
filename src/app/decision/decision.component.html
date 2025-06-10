@@ -1,0 +1,64 @@
+<div class="evaluations-container">
+  <h2>Décisions des Candidats</h2>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <span>Filtrer par :</span>
+
+      <div class="dropdown">
+        <select [(ngModel)]="filtres.statut" (change)="appliquerFiltres()">
+          <option *ngFor="let option of optionsStatut" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <div class="search-box">
+        <input type="text" [(ngModel)]="filtres.recherche" placeholder="Rechercher un candidat ou jury..."
+          (keyup.enter)="appliquerFiltres()">
+        <button *ngIf="filtres.recherche" class="clear-btn" (click)="filtres.recherche=''; appliquerFiltres()">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Candidat</th>
+          <th>Jury</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let decision of decisionsAffichees">
+          <td>{{ decision.candidat.nom }} {{ decision.candidat.prenom }}</td>
+          <td>{{ decision.jury.nom }} {{ decision.jury.prenom }}</td>
+         
+          <td>
+            <span class="status" [ngClass]="getStatutClass(decision)">
+    {{ decision.verdict || 'Non défini' }}
+  </span>
+          </td>
+          <td>
+            <button class="btn-view" (click)="voirDecision(decision)">
+              Voir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span>Affichage de
+      {{ (pageActuelle - 1) * decisionsParPage + 1 }}-{{ minPage }}
+      sur {{ totalDecisions }} décisions</span>
+    <div class="pagination-controls">
+      <button [disabled]="pageActuelle === 1" (click)="changerPage(1)">«</button>
+      <button *ngFor="let page of pages" [class.active]="page === pageActuelle" (click)="changerPage(page)">
+        {{ page }}
+      </button>
+      <button [disabled]="pageActuelle === pages.length" (click)="changerPage(pages.length)">»</button>
+    </div>
+  </div>
+</div>

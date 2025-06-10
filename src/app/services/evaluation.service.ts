@@ -291,4 +291,16 @@ export class EvaluationService {
   //     headers: this.getAuthHeaders()
   //   });
   // }
+
+  addOrUpdateDecision(candidatId: number, juryId: number, commentaireFinal: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/api/decisions`, // adapte l'URL si besoin
+      {
+        candidatId,
+        juryId,
+        commentaireFinal
+      },
+      { headers: this.getAuthHeaders() }
+    );
+  }
 }
