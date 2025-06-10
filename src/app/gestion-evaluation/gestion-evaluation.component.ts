@@ -127,7 +127,7 @@ export class GestionEvaluationComponent implements OnInit {
                   candidatId: evaluation.candidatId,
                   candidat: {
                     nom: candidatInfo?.nom || 'Nom inconnu',
-                    prenom: candidatInfo?.prenom || 'Prénom inconnu',
+                    prenom: candidatInfo?.prenom || 'Prénom inconnu'
                   },
                   jury: {
                     nom: juryInfo?.nom || 'Nom inconnu',
@@ -165,19 +165,19 @@ export class GestionEvaluationComponent implements OnInit {
   private mapperEvaluationsSansDetails(data: any[]): void {
     this.evaluations = data.map(evaluation => ({
       id: evaluation.id,
-      candidatId: evaluation.candidatId,
+      candidatId: evaluation.candidat?.id,
       candidat: {
-        nom: 'Nom inconnu',
-        prenom: 'Prénom inconnu',
+        nom: evaluation.candidat?.nom || 'Nom inconnu',
+        prenom: evaluation.candidat?.prenom || 'Prénom inconnu'
       },
       jury: {
-        nom: 'Nom inconnu',
-        prenom: 'Prénom inconnu'
+        nom: evaluation.jury?.nom || 'Nom inconnu',
+        prenom: evaluation.jury?.prenom || 'Prénom inconnu'
       },
-      sujet: evaluation.sujet || 'Sujet non spécifié',
-dateHeure: evaluation.dateHeure ? new Date(evaluation.dateHeure) : new Date(),
+      sujet: evaluation.sujet || 'Sujet non défini',
+      dateHeure: evaluation.dateHeure ? new Date(evaluation.dateHeure) : null,
       statut: evaluation.moyenne ? 'Évalué' : 'Non Évalué',
-      juryId: evaluation.juryId || null
+      juryId: evaluation.jury?.id ?? null
     }));
     this.totalEvaluations = this.evaluations.length;
   }

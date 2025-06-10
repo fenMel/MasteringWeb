@@ -1,4 +1,3 @@
-
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +13,9 @@ import { EvaluationService } from '../services/evaluation.service';
 import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
 import { ActivatedRoute } from '@angular/router';
 import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
+import { DecisionComponent } from '../decision/decision.component';
+import { VoirDecisionComponent } from '../voir-decision/voir-decision.component';
+import { Decision } from '../decision/decision.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +30,9 @@ import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.comp
     SessionsFormationComponent,
     AjouterEvaluationComponent,
     AjoutUtilisateurs,
-    GestionEvaluationComponent
+    GestionEvaluationComponent,
+    DecisionComponent,
+    VoirDecisionComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -38,6 +42,7 @@ export class DashboardComponent implements OnInit {
   sousMenu: string = 'liste'; // 'liste' ou 'ajouter'
   evaluationId?: number; // Ajout d'une propriété pour stocker l'ID d'évaluation
   evaluationResults: any = null; // Stocker les résultats d'évaluation
+  decisionSelectionnee: Decision | null = null;
 
   constructor(
     public authService: AuthService,
@@ -113,9 +118,11 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  setSousMenu = (menu: string): void => {
+  setSousMenu = (menu: string, decision?: Decision): void => {
     this.sousMenu = menu;
-    console.log("Sous-menu changé à:", menu);
+    if (decision) {
+      this.decisionSelectionnee = decision;
+    }
   };
 
   getRoleTitle(): string {

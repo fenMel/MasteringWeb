@@ -29,6 +29,9 @@
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
           <a (click)="setActiveMenu('evaluations')">Gestion des évaluations</a>
         </div>
+         <div class="menu-item" [class.active]="activeMenu === 'decision'">
+          <a (click)="setActiveMenu('decision')">Gestion les decision</a>
+        </div>
         <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
           <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
         </div>
@@ -115,7 +118,18 @@
       <ng-container *ngIf="activeMenu === 'evaluations'">
         <app-gestion-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-evaluation>
         <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      
       </ng-container>
+      
+      <ng-container *ngIf="activeMenu === 'decision'">
+        <app-decision *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-decision>
+        <app-voir-decision
+          *ngIf="sousMenu === 'voir-decision'"
+          [evaluationResults]="[decisionSelectionnee]"
+          [setSousMenu]="setSousMenu">
+        </app-voir-decision> 
+      </ng-container>
+
     </div>
 
     <!-- Contenu principal pour jury -->

@@ -226,15 +226,11 @@
       }
     }
   }
-  .snackbar-success { background: #43a047; color: #fff; }
-.snackbar-error { background: #e53935; color: #fff; }
-
-
-.snackbar-success {
-  background-color: #43a047 !important; /* Vert Material */
+::ng-deep .snackbar-success {
+  background: #43a047 !important;
   color: #fff !important;
 }
 .snackbar-error {
-  background-color: #d32f2f !important; /* Rouge Material */
+  background: #e53935 !important; // rouge
   color: #fff !important;
 }

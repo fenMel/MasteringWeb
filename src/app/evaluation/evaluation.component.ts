@@ -91,9 +91,10 @@ export class EvaluationComponent implements OnInit {
                 return {
                   id: evaluation.id,
                   candidatId: evaluation.candidatId,
-                  candidat: candidatInfo
-                    ? { nom: candidatInfo.nom ?? 'Nom inconnu', prenom: candidatInfo.prenom ?? 'Prénom inconnu' }
-                    : { nom: 'Nom inconnu', prenom: 'Prénom inconnu' },
+                  candidat: {
+                    nom: candidatInfo?.nom || 'Nom inconnu',
+                    prenom: candidatInfo?.prenom || 'Prénom inconnu',
+                  },
                   sujet: evaluation.sujet || 'Sujet non spécifié',
                   dateHeure: evaluation.dateHeure ? new Date(evaluation.dateHeure) : new Date(),
                   // Ajoute ici pour accès direct dans le template :
