@@ -12,15 +12,13 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
-/* Succès */
-.snackbar-success {
-  background: #43a047 !important; /* vert */
+// styles.scss (global)
+.mat-mdc-snack-bar-container.snackbar-success {
+  background: #43a047 !important; /* Vert succès */
   color: #fff !important;
 }
-
-/* Erreur */
-.snackbar-error {
-  background: #e53935 !important; /* rouge */
+.mat-mdc-snack-bar-container.snackbar-error {
+  background: #e53935 !important; /* Rouge erreur */
   color: #fff !important;
 }
 

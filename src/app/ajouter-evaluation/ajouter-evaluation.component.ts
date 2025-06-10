@@ -364,12 +364,27 @@ export class AjouterEvaluationComponent implements OnInit, OnDestroy {
 
     req.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        this.snackBar.dismiss(); // Dismiss previous snackbar if any
+        this.snackBar.dismiss();
         this.snackBar.open('Évaluation sauvegardée avec succès !', undefined, {
           duration: 2000,
           panelClass: 'snackbar-success'
         });
-        this.retourListe(); // Navigate after successful save/update
+        // Appel à addOrUpdateDecision pour mettre à jour la décision du candidat
+        if (this.candidatId && this.juryId) {
+          this.evaluationService.addOrUpdateDecision(
+            this.candidatId,
+            this.juryId,
+            'Ajout ou modification d\'évaluation'
+          ).subscribe({
+            next: () => this.retourListe(),
+            error: (err) => {
+              console.error('Erreur lors de la mise à jour de la décision:', err);
+              this.retourListe();
+            }
+          });
+        } else {
+          this.retourListe();
+        }
       },
       error: (err) => {
         console.error("Error saving evaluation:", err);
@@ -462,7 +477,16 @@ private executeDelete(): void {
 
 private handleDeleteSuccess(): void {
   this.resetDeleteState();
-  this.snackBar.open('Évaluation supprimée.', undefined, { duration: 3000, panelClass: 'snackbar-success' });
+  this.snackBar.open('Évaluation supprimée.', undefined, { duration: 10000, panelClass: 'snackbar-success' });
+
+  // Appel à addOrUpdateDecision pour mettre à jour la décision du candidat
+  if (this.candidatId && this.juryId) {
+    this.evaluationService.addOrUpdateDecision(this.candidatId, this.juryId, 'Suppression ou modification d\'évaluation').subscribe({
+      next: () => console.log('Décision mise à jour après suppression'),
+      error: (err) => console.error('Erreur lors de la mise à jour de la décision:', err)
+    });
+  }
+
   this.retourListe(true);
 }
 

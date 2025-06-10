@@ -27,8 +27,19 @@
         <div class="menu-item" [class.active]="activeMenu === 'evaluations'">
           <a (click)="setActiveMenu('evaluations'); closeSidebar()">Évaluations récentes</a>
         </div>
+
+         <div class="menu-item" [class.active]="activeMenu === 'decision'">
+          <a (click)="setActiveMenu('decision')">Gestion les decision</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
+          <a (click)="setActiveMenu('ListeFormations')">Gérer les formations</a>
+        </div>
+        <div class="menu-item" [class.active]="activeMenu === 'ListeSessionsFormation'">
+          <a (click)="setActiveMenu('ListeSessionsFormation')">Sessions de formations</a>
+
         <div class="menu-item" [class.active]="activeMenu === 'deliberations'">
           <a (click)="setActiveMenu('deliberations'); closeSidebar()">Délibérations</a>
+
         </div>
         <div class="menu-item" [class.active]="activeMenu === 'parametres'">
           <a (click)="setActiveMenu('parametres'); closeSidebar()">Paramètres</a>
@@ -157,9 +168,33 @@
         <ajout-utilisateurs></ajout-utilisateurs>
       </ng-container>
 
+      <ng-container *ngIf="activeMenu === 'evaluations'">
+        <app-gestion-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-gestion-evaluation>
+        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+      
+      </ng-container>
+      
+      <ng-container *ngIf="activeMenu === 'decision'">
+        <app-decision *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-decision>
+        <app-voir-decision
+          *ngIf="sousMenu === 'voir-decision'"
+          [evaluationResults]="[decisionSelectionnee]"
+          [setSousMenu]="setSousMenu">
+        </app-voir-decision> 
+      </ng-container>
+
+    </div>
+
+    <!-- Contenu principal pour jury -->
+    <div *ngIf="authService.isJury()" class="main-content">
+      <ng-container *ngIf="activeMenu === 'soutenances'">
+        <app-evaluation *ngIf="sousMenu === 'liste'" [setSousMenu]="setSousMenu"></app-evaluation>
+        <app-ajouter-evaluation *ngIf="sousMenu === 'ajouter-evaluation'" [setSousMenu]="setSousMenu"></app-ajouter-evaluation>
+
       <ng-container *ngIf="activeMenu === 'tableau'">
         <!-- Affiche le tableau -->
         <app-users-list></app-users-list>
+
       </ng-container>
     </div>
 
