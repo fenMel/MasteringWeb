@@ -13,13 +13,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let evaluation of evaluationResults">
-        <td>{{ evaluation.candidat?.prenom }} {{ evaluation.candidat?.nom }}</td>
-        <td>{{ evaluation.jury?.prenom }} {{ evaluation.jury?.nom }}</td>
-        <td>
+        <td data-label="Candidat">{{ evaluation.candidat?.prenom }} {{ evaluation.candidat?.nom }}</td>
+        <td data-label="Jury">{{ evaluation.jury?.prenom }} {{ evaluation.jury?.nom }}</td>
+        <td data-label="Note finale">
           {{ evaluation.evaluation?.moyenne != null ? (evaluation.evaluation.moyenne + '/20') : 'Non Évalué' }}
         </td>
-        <td>{{ evaluation.commentaire_final || evaluation.commentaireFinal || 'Aucun' }}</td>
-        <td>
+        <td data-label="Commentaire">{{ evaluation.commentaire_final || evaluation.commentaireFinal || 'Aucun' }}</td>
+        <td data-label="Verdict">
           <span [ngClass]="{
             'status-green': evaluation.verdict === 'ADMIS',
             'status-red': evaluation.verdict === 'NON_ADMIS',

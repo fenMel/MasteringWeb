@@ -10,6 +10,7 @@
   font-weight: bold;
 }
 
+/* Résultats */
 .evaluation-results {
   display: flex;
   flex-wrap: wrap;
@@ -30,30 +31,31 @@
   flex-direction: column;
   align-items: center;
   transition: box-shadow 0.2s;
+}
 
-  &:hover {
-    box-shadow: 0 4px 16px rgba(60, 60, 60, 0.12);
-  }
+.result-row:hover {
+  box-shadow: 0 4px 16px rgba(60, 60, 60, 0.12);
+}
 
-  p {
-    margin: 0.4rem 0;
-    font-size: 1.05rem;
-    text-align: center;
+.result-row p {
+  margin: 0.4rem 0;
+  font-size: 1.05rem;
+  text-align: center;
+}
 
-    strong {
-      color: #2563eb;
-    }
-    em {
-      color: #64748b;
-    }
-  }
+.result-row p strong {
+  color: #2563eb;
+}
 
-  .verdict {
-    font-weight: bold;
-    color: #059669;
-    font-size: 1.1rem;
-    margin-top: 0.7rem;
-  }
+.result-row p em {
+  color: #64748b;
+}
+
+.result-row .verdict {
+  font-weight: bold;
+  color: #059669;
+  font-size: 1.1rem;
+  margin-top: 0.7rem;
 }
 
 .no-results {
@@ -62,15 +64,83 @@
   margin-top: 2rem;
 }
 
-@media (max-width: 700px) {
+/* Responsivité TABLE + Résultats */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-container table {
+    min-width: 600px;
+  }
+
   .evaluation-results {
     flex-direction: column;
-    gap: 1.2rem;
     align-items: center;
+    gap: 1rem;
+    padding: 0 0.5rem;
   }
+
   .result-row {
-    min-width: 0;
-    width: 95%;
-    padding: 1rem 0.5rem;
+    width: 100%;
+    max-width: 95%;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .result-row p {
+    font-size: 0.95rem;
+  }
+
+  .result-row .verdict {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .decision-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-collapse: collapse;
+  }
+
+  .decision-table table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .result-row {
+    padding: 0.8rem;
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+  }
+
+  .result-row p {
+    font-size: 0.9rem;
+  }
+
+  .result-row .verdict {
+    font-size: 0.95rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .no-results {
+    font-size: 1rem;
+    text-align: center;
+    padding: 0 1rem;
   }
 }

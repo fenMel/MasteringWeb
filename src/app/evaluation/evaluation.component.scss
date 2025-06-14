@@ -189,3 +189,151 @@
     }
   }
 }
+@media (max-width: 480px) {
+  .evaluation-container {
+    padding: 4px;
+  }
+  .candidate-card {
+    padding: 6px;
+  }
+  .candidate-card h2 {
+    font-size: 1.05rem;
+  }
+  .candidate-card p,
+  .date-heure {
+    font-size: 0.95rem;
+    margin: 6px 0;
+    text-align: center;
+    word-break: break-word;
+  }
+  .evaluation-title {
+    font-size: 1.1rem;
+  }
+  .evaluation-grid,
+  .grid-row,
+  .grid-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    font-size: 0.92rem;
+  }
+  .cell {
+    padding: 6px 4px;
+    text-align: left;
+  }
+  .note-input, .coef-input {
+    width: 40px;
+    font-size: 0.92rem;
+    padding: 4px;
+  }
+  .commentaires-section {
+    padding: 4px;
+  }
+  .commentaires-textarea {
+    font-size: 0.92rem;
+    padding: 4px;
+  }
+  .note-finale-section {
+    padding: 4px;
+    font-size: 0.95rem;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .btn {
+    padding: 7px 10px;
+    font-size: 0.92rem;
+    min-width: 90px;
+  }
+}
+@media (max-width: 600px) {
+  .candidats-list {
+    padding: 0;
+  }
+  .candidat-card {
+    min-width: 95vw;
+    max-width: 99vw;
+    padding: 1rem 0.5rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .candidat-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  .btn-evaluer {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.7rem 0;
+  }
+}
+@media (max-width: 768px) {
+  .evaluations-container {
+    padding: 10px;
+
+    h2 {
+      font-size: 1.4rem;
+      text-align: center;
+    }
+
+    .filters-container {
+      padding: 10px;
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+
+        .filter-dateheure {
+          flex-direction: column;
+          align-items: stretch;
+          input[type="time"],
+          input[matinput] {
+            width: 100%;
+          }
+        }
+
+        .dropdown select,
+        .search-box input {
+          width: 100%;
+        }
+
+        .search-box {
+          max-width: 100%;
+        }
+
+        .clear-btn {
+          right: 12px;
+        }
+      }
+    }
+
+    .table-container {
+      overflow-x: auto;
+      table {
+        width: 700px; // force scroll horizontal si trop large
+        font-size: 0.85rem;
+
+        th, td {
+          padding: 10px;
+        }
+      }
+    }
+
+    .pagination {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        button {
+          font-size: 0.85rem;
+          min-width: 28px;
+          height: 28px;
+        }
+      }
+    }
+  }
+}
