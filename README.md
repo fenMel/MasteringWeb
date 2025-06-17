@@ -57,3 +57,26 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+
+
+▶️ Lancement
+
+Modifier
+cd frontend/
+npm install
+ng serve
+📎 Accès : http://localhost:4200
+
+
+Modifier
+// src/environments/environment.ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api'
+};
+
+
+Documenation de :
+FENZI MELISSA : https://drive.google.com/drive/folders/1sAXoGutal9ts1OVyZTNTqO3l0gVzXmc5?usp=drive_link
