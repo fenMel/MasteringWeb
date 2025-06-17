@@ -67,6 +67,9 @@
         <div class="menu-item" [class.active]="activeMenu === 'decision'">
           <a (click)="setActiveMenu('decision')">Gestion les decisions</a>
         </div>
+          <div class="menu-item" [class.active]="activeMenu === 'ArchiveDecision'">
+          <a (click)="setActiveMenu('ArchiveDecision')">Archive des decisions</a>
+        </div>
         <div class="menu-item" [class.active]="activeMenu === 'ListeFormations'">
           <a (click)="setActiveMenu('ListeFormations'); closeSidebar()">Gérer les formations</a>
         </div>
@@ -171,6 +174,10 @@
           [evaluationResults]="[decisionSelectionnee]"
           [setSousMenu]="setSousMenu">
         </app-voir-decision>
+      </ng-container>
+      <ng-container *ngIf="activeMenu === 'ArchiveDecision'">
+        <!-- Affiche le tableau -->
+        <app-archive-decision></app-archive-decision>
       </ng-container>
     </div>
 

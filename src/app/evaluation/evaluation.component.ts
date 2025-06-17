@@ -12,40 +12,56 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Evaluation, FiltresEvaluation } from './evaluation.model';
 import { EvaluationService } from '../services/evaluation.service';
 
+/**
+ * Composant pour la gestion des évaluations
+ */
 @Component({
   standalone: true,
   selector: 'app-evaluation',
-  imports: [ CommonModule,
+  imports: [ 
+    CommonModule,
     FormsModule,
     MatDatepickerModule,
     MatInputModule,
     MatNativeDateModule,
-    MatFormFieldModule ],
+    MatFormFieldModule 
+  ],
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.scss']
 })
 export class EvaluationComponent implements OnInit {
+  // Liste des évaluations à afficher
   evaluations: Evaluation[] = [];
+  // Nombre total d'évaluations (pour la pagination)
   totalEvaluations: number = 0;
+  // Page actuelle
   pageActuelle: number = 1;
+  // Nombre d'évaluations par page
   evaluationsParPage: number = 5;
 
+  // Liste de tous les candidats (pour les filtres)
   allCandidats: any[] = [];
 
+  // Fonction pour changer le sous-menu (injectée depuis le parent)
   @Input() setSousMenu!: (menu: string) => void;
 
+  // Filtres disponibles
   filtres: any = {
     date: null,   // Date sélectionnée
     heure: '',    // Heure sélectionnée (format 'HH:mm')
-    statut: 'Tout les statuts',
-    candidat: ''
+    statut: 'Tout les statuts', // Statut de l'évaluation
+    candidat: ''  // Nom du candidat
   };
 
+  // Options pour les filtres de date
   optionsDate = ['Toutes les dates', 'Aujourd\'hui', 'Cette semaine', 'Ce mois'];
+  // Options pour les filtres de statut
   optionsStatut = ['Tout les statuts', 'Évalué', 'Non Évalué'];
 
+  // Référence à l'objet Math pour utilisation dans le template
   Math: Math = Math;
 
+  // Mode "voir" (lecture seule) ou "éditer"
   modeVoir: boolean = false;
 
   constructor(
@@ -53,11 +69,17 @@ export class EvaluationComponent implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit(): void {
     this.chargerEvaluations();
     this.modeVoir = this.evaluationService.getViewMode();
   }
 
+  /**
+   * Charge les évaluations depuis le service
+   */
   chargerEvaluations(): void {
     this.evaluationService.getEvaluationsFiltered(
       this.filtres.dateRange,
@@ -65,12 +87,16 @@ export class EvaluationComponent implements OnInit {
       this.filtres.candidat
     ).subscribe(
       (data: any[]) => {
+        // Récupère les IDs uniques des candidats
         const candidatIds = [...new Set(data.map(evaluation => evaluation.candidatId))];
 
         if (candidatIds.length > 0) {
+          // Charge les informations des candidats en parallèle
           this.evaluationService.getCandidatsParIds(candidatIds).subscribe(
             (candidatsArrays: any[]) => {
               const allCandidats: any[] = [];
+              
+              // Normalise les données des candidats (peuvent être dans des tableaux)
               candidatsArrays.forEach((candidatData) => {
                 if (Array.isArray(candidatData) && candidatData.length > 0) {
                   candidatData.forEach(candidat => {
@@ -83,6 +109,7 @@ export class EvaluationComponent implements OnInit {
                 }
               });
 
+              // Mappe les évaluations avec les informations des candidats
               this.evaluations = data.map(evaluation => {
                 const candidatInfo = allCandidats.find(
                   c => String(c.candidat?.id) === String(evaluation.candidatId)
@@ -97,11 +124,11 @@ export class EvaluationComponent implements OnInit {
                   },
                   sujet: evaluation.sujet || 'Sujet non spécifié',
                   dateHeure: evaluation.dateHeure ? new Date(evaluation.dateHeure) : new Date(),
-                  // Ajoute ici pour accès direct dans le template :
+                  // Formatage pour l'affichage
                   date: evaluation.dateHeure ? new Date(evaluation.dateHeure).toLocaleDateString() : '',
                   heure: evaluation.dateHeure ? new Date(evaluation.dateHeure).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
                   statut: evaluation.moyenne ? 'Évalué' : 'Non Évalué',
-                  juryId: evaluation.juryId ?? evaluation.jury?.id ?? null // Ajout du juryId pour le filtre
+                  juryId: evaluation.juryId ?? evaluation.jury?.id ?? null
                 };
               });
 
@@ -122,22 +149,34 @@ export class EvaluationComponent implements OnInit {
     );
   }
 
+  /**
+   * Applique les filtres et recharge les évaluations
+   */
   appliquerFiltres(): void {
     this.pageActuelle = 1;
     this.chargerEvaluations();
   }
 
+  /**
+   * Change la page actuelle
+   * @param page Numéro de la page
+   */
   changerPage(page: number): void {
     this.pageActuelle = page;
   }
 
+  /**
+   * Retourne les évaluations à afficher en fonction des filtres et de la pagination
+   */
   get evaluationsAffichees(): Evaluation[] {
-    // 1. Récupère l'ID du jury connecté
+    // Récupère l'ID du jury connecté
     const currentUser = this.evaluationService.getCurrentUser();
     const juryId = currentUser?.id;
 
     let filtered = this.evaluations;
-  if (this.filtres.date) {
+    
+    // Filtre par date
+    if (this.filtres.date) {
       filtered = filtered.filter(e => {
         if (!e.dateHeure) return false;
         const evalDate = new Date(e.dateHeure);
@@ -148,9 +187,7 @@ export class EvaluationComponent implements OnInit {
       });
     }
 
- 
-
-    // 4. Filtre par heure
+    // Filtre par heure
     if (this.filtres.heure) {
       filtered = filtered.filter(e => {
         const evalDate = e.dateHeure ? new Date(e.dateHeure) : null;
@@ -160,17 +197,18 @@ export class EvaluationComponent implements OnInit {
           evalDate.getMinutes().toString().padStart(2, '0') === heure;
       });
     }
-    // 2. Filtre par jury connecté
+    
+    // Filtre par jury connecté
     if (juryId) {
       filtered = filtered.filter(e => e.juryId === juryId);
     }
 
-    // 3. Filtre par statut
+    // Filtre par statut
     if (this.filtres.statut && this.filtres.statut !== 'Tout les statuts') {
       filtered = filtered.filter(e => e.statut === this.filtres.statut);
     }
 
-    // 4. Filtre par nom/prénom du candidat
+    // Filtre par nom/prénom du candidat
     if (this.filtres.candidat && this.filtres.candidat.trim() !== '') {
       const search = this.filtres.candidat.trim().toLowerCase();
       filtered = filtered.filter(e =>
@@ -178,24 +216,35 @@ export class EvaluationComponent implements OnInit {
         (e.candidat.prenom + ' ' + e.candidat.nom).toLowerCase().includes(search)
       );
     }
-  this.totalEvaluations = filtered.length;
+    
+    this.totalEvaluations = filtered.length;
 
-    // 5. Pagination
+    // Pagination
     const debut = (this.pageActuelle - 1) * this.evaluationsParPage;
-const fin = debut + this.evaluationsParPage;
-return filtered.slice(debut, fin);
+    const fin = debut + this.evaluationsParPage;
+    return filtered.slice(debut, fin);
   }
 
+  /**
+   * Retourne la liste des numéros de page disponibles
+   */
   get pages(): number[] {
     const totalPages = Math.ceil(this.totalEvaluations / this.evaluationsParPage);
     return Array(totalPages).fill(0).map((_, index) => index + 1);
   }
 
+  /**
+   * Réinitialise le filtre de recherche par candidat
+   */
   nettoyerRecherche(): void {
     this.filtres.candidat = '';
     this.appliquerFiltres();
   }
 
+  /**
+   * Redirige vers l'écran d'évaluation d'un candidat
+   * @param evaluation L'évaluation à modifier
+   */
   evaluer(evaluation: Evaluation): void {
     this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
     this.evaluationService.setSelectedEvaluationId(evaluation.id);
@@ -213,6 +262,10 @@ return filtered.slice(debut, fin);
     }
   }
 
+  /**
+   * Redirige vers l'écran de visualisation d'une évaluation
+   * @param evaluation L'évaluation à visualiser
+   */
   voirEvaluation(evaluation: any): void {
     this.evaluationService.setViewMode(true);
 
@@ -229,6 +282,7 @@ return filtered.slice(debut, fin);
         console.warn('Aucun utilisateur connecté trouvé.');
       }
 
+      // Charge les détails du candidat
       this.evaluationService.getCandidat(evaluation.candidatId).subscribe(
         (candidatInfo) => {
           this.evaluationService.setSelectedCandidatDetails(candidatInfo);
@@ -250,6 +304,10 @@ return filtered.slice(debut, fin);
     }
   }
 
+  /**
+   * Retourne le nom complet d'un candidat
+   * @param candidat L'objet candidat contenant nom et prénom
+   */
   getNomPrenomCandidat(candidat: { nom: string; prenom: string }): string {
     if (!candidat) return '';
     return `${candidat.nom ?? ''} ${candidat.prenom ?? ''}`.trim();

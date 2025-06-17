@@ -9,6 +9,7 @@
         <th>Note finale</th>
         <th>Commentaire</th>
         <th>Verdict</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -27,6 +28,9 @@
           }">
             {{ evaluation.evaluation?.moyenne != null ? (evaluation.verdict || 'Non défini') : 'Non Évalué' }}
           </span>
+        </td>
+        <td data-label="Action">
+          <button (click)="supprimerDecision(evaluation.id)">Supprimer</button>
         </td>
       </tr>
     </tbody>
