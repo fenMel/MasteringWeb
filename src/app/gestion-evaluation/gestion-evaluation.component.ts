@@ -12,6 +12,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Evaluation, FiltresEvaluation } from './evaluation.model';
 import { EvaluationService } from '../services/evaluation.service';
 
+/**
+ * Composant pour la gestion complète des évaluations
+ * Permet de lister, filtrer et naviguer vers les évaluations
+ */
 @Component({
   selector: 'app-gestion-evaluation',
   imports: [
@@ -26,29 +30,39 @@ import { EvaluationService } from '../services/evaluation.service';
   styleUrl: './gestion-evaluation.component.scss'
 })
 export class GestionEvaluationComponent implements OnInit {
+  // Liste des évaluations chargées
   evaluations: Evaluation[] = [];
+  // Nombre total d'évaluations (pour pagination)
   totalEvaluations: number = 0;
+  // Pagination - page courante
   pageActuelle: number = 1;
+  // Nombre d'items par page
   evaluationsParPage: number = 5;
 
+  // Liste des candidats pour les filtres
   allCandidats: any[] = [];
 
+  // Fonction de callback pour changer le sous-menu
   @Input() setSousMenu!: (menu: string) => void;
 
+  // Configuration des filtres disponibles
   filtres: any = {
-    date: null,   // Date sélectionnée
-    heure: '',    // Heure sélectionnée (format 'HH:mm')
-    statut: 'Tout les statuts',
-    candidat: '',
-    jury: '' ,
-      recherche: ''
+    date: null,       // Filtre par date
+    heure: '',        // Filtre par heure (format HH:mm)
+    statut: 'Tout les statuts', // Filtre par statut
+    candidat: '',     // Filtre par nom candidat
+    jury: '',         // Filtre par nom jury
+    recherche: ''     // Recherche globale
   };
 
+  // Options prédéfinies pour les filtres
   optionsDate = ['Toutes les dates', 'Aujourd\'hui', 'Cette semaine', 'Ce mois'];
   optionsStatut = ['Tout les statuts', 'Évalué', 'Non Évalué'];
 
+  // Référence à Math pour le template
   Math: Math = Math;
 
+  // Mode affichage (lecture seule)
   modeVoir: boolean = false;
 
   constructor(
@@ -58,7 +72,10 @@ export class GestionEvaluationComponent implements OnInit {
     private snackBar: MatSnackBar
   ) { }
 
-  // --- Ajoute ces méthodes utilitaires ---
+  /**
+   * Affiche un message de succès
+   * @param message Message à afficher
+   */
   showSuccess(message: string): void {
     this.snackBar.open(message, 'OK', {
       duration: 3000,
@@ -66,18 +83,25 @@ export class GestionEvaluationComponent implements OnInit {
     });
   }
 
+  /**
+   * Affiche un message d'erreur
+   * @param message Message à afficher
+   */
   showError(message: string): void {
     this.snackBar.open(message, 'Fermer', {
       duration: 4000,
       panelClass: 'snackbar-error'
     });
   }
-  // ---------------------------------------
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit(): void {
     this.chargerEvaluations();
     this.modeVoir = this.evaluationService.getViewMode();
 
+    // Gestion des paramètres de requête
     this.route.queryParams.subscribe(params => {
       if (params['suppressionSuccess'] === '1') {
         this.showSuccess('Suppression réussie');
@@ -85,6 +109,9 @@ export class GestionEvaluationComponent implements OnInit {
     });
   }
 
+  /**
+   * Charge les évaluations depuis l'API avec filtres
+   */
   chargerEvaluations(): void {
     this.evaluationService.getEvaluationsFiltered(
       this.filtres.dateRange,
@@ -92,35 +119,39 @@ export class GestionEvaluationComponent implements OnInit {
       this.filtres.candidat
     ).subscribe({
       next: (data: any[]) => {
-        console.log('Données reçues de l\'API:', data); // Debug
+        console.log('Données reçues de l\'API:', data);
         
+        // Extraction des IDs uniques
         const candidatIds = [...new Set(data.map(e => e.candidatId))];
         const juryIds = [...new Set(data.map(e => e.juryId))];
 
+        // Si des évaluations existent
         if (candidatIds.length > 0 && juryIds.length > 0) {
+          // Chargement parallèle des candidats et jurys
           forkJoin([
             this.evaluationService.getCandidatsParIds(candidatIds),
             this.evaluationService.getJurysParIds(juryIds)
           ]).subscribe({
             next: ([candidatsArrays, jurysArrays]) => {
-              // Traitement des candidats
+              // Normalisation des données candidats
               const allCandidats = candidatsArrays.flatMap(c => 
                 Array.isArray(c) ? c : [c]
               ).filter(c => c?.id);
 
-              // Traitement des jurys
+              // Filtrage des jurys valides
               const allJurys = jurysArrays.filter(j => j?.id);
 
+              // Mapping complet des évaluations
               this.evaluations = data.map(evaluation => {
+                // Recherche des infos candidat
                 const candidatInfo = allCandidats.find(
                   c => String(c.candidat?.id) === String(evaluation.candidatId)
                 )?.candidat || allCandidats.find(c => String(c.id) === String(evaluation.candidatId));
 
+                // Recherche des infos jury
                 const juryInfo = allJurys.find(
                   j => String(j.id) === String(evaluation.juryId)
                 );
-
-                console.log('Mapping évaluation:', evaluation); // Debug
 
                 return {
                   id: evaluation.id,
@@ -141,27 +172,30 @@ export class GestionEvaluationComponent implements OnInit {
               });
 
               this.totalEvaluations = this.evaluations.length;
-              console.log('Évaluations finales:', this.evaluations); // Debug
             },
             error: (err) => {
-              console.error('Erreur lors du chargement des candidats/jurys:', err);
-              // En cas d'erreur, mapper quand même les évaluations avec les données disponibles
+              console.error('Erreur candidats/jurys:', err);
+              // Fallback si erreur
               this.mapperEvaluationsSansDetails(data);
             }
           });
         } else {
-          // Si pas de candidats/jurys, mapper quand même les évaluations
+          // Cas où pas d'évaluations
           this.mapperEvaluationsSansDetails(data);
         }
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des évaluations:', err);
+        console.error('Erreur chargement évaluations:', err);
         this.evaluations = [];
         this.totalEvaluations = 0;
       }
     });
   }
 
+  /**
+   * Mapping de secours quand on ne peut pas charger les détails
+   * @param data Données brutes des évaluations
+   */
   private mapperEvaluationsSansDetails(data: any[]): void {
     this.evaluations = data.map(evaluation => ({
       id: evaluation.id,
@@ -182,93 +216,102 @@ export class GestionEvaluationComponent implements OnInit {
     this.totalEvaluations = this.evaluations.length;
   }
 
+  /**
+   * Applique les filtres et recharge les données
+   */
   appliquerFiltres(): void {
     this.pageActuelle = 1;
     this.chargerEvaluations();
-    // Exemple d'utilisation :
-    // this.showSuccess('Filtres appliqués');
   }
 
+  /**
+   * Change la page courante
+   * @param page Numéro de page
+   */
   changerPage(page: number): void {
     this.pageActuelle = page;
   }
 
-get evaluationsAffichees(): Evaluation[] {
-  const currentUser = this.evaluationService.getCurrentUser();
-  const juryId = currentUser?.id;
-  let filtered = [...this.evaluations]; // Create a new array to avoid mutation
+  /**
+   * Filtre les évaluations selon les critères
+   */
+  get evaluationsAffichees(): Evaluation[] {
+    const currentUser = this.evaluationService.getCurrentUser();
+    const juryId = currentUser?.id;
+    let filtered = [...this.evaluations]; // Copie pour immutabilité
 
-  // Debug logs
-  console.log('Current User:', currentUser);
-  console.log('Jury ID:', juryId);
-  console.log('Initial Evaluations:', filtered);
+    // 1. Filtrage par date
+    if (this.filtres.date) {
+      const filtreDate = new Date(this.filtres.date);
+      filtered = filtered.filter(e => {
+        if (!e.dateHeure) return false;
+        const evalDate = new Date(e.dateHeure);
+        return evalDate.toDateString() === filtreDate.toDateString();
+      });
+    }
 
-  
+    // 2. Filtrage par heure
+    if (this.filtres.heure) {
+      const [h, m] = this.filtres.heure.split(':');
+      filtered = filtered.filter(e => {
+        if (!e.dateHeure) return false;
+        const evalDate = new Date(e.dateHeure);
+        return evalDate.getHours() === +h && evalDate.getMinutes() === +m;
+      });
+    }
 
-  // 2. Date filter
-  if (this.filtres.date) {
-    const filtreDate = new Date(this.filtres.date);
-    filtered = filtered.filter(e => {
-      if (!e.dateHeure) return false;
-      const evalDate = new Date(e.dateHeure);
-      return evalDate.toDateString() === filtreDate.toDateString();
-    });
+    // 3. Filtrage par statut
+    if (this.filtres.statut && this.filtres.statut !== 'Tout les statuts') {
+      filtered = filtered.filter(e => e.statut === this.filtres.statut);
+    }
+
+    // 4. Filtrage par nom candidat
+    if (this.filtres.candidat?.trim()) {
+      const search = this.filtres.candidat.trim().toLowerCase();
+      filtered = filtered.filter(e => 
+        `${e.candidat.nom} ${e.candidat.prenom}`.toLowerCase().includes(search) ||
+        `${e.candidat.prenom} ${e.candidat.nom}`.toLowerCase().includes(search)
+      );
+    }
+
+    // 5. Recherche globale (candidat ou jury)
+    if (this.filtres.recherche?.trim()) {
+      const search = this.filtres.recherche.trim().toLowerCase();
+      filtered = filtered.filter(e =>
+        (`${e.candidat.nom} ${e.candidat.prenom}`.toLowerCase().includes(search) ||
+         `${e.candidat.prenom} ${e.candidat.nom}`.toLowerCase().includes(search) ||
+         `${e.jury.nom} ${e.jury.prenom}`.toLowerCase().includes(search) ||
+         `${e.jury.prenom} ${e.jury.nom}`.toLowerCase().includes(search))
+      );
+    }
+
+    // Mise à jour du total et pagination
+    this.totalEvaluations = filtered.length;
+    const debut = (this.pageActuelle - 1) * this.evaluationsParPage;
+    const fin = debut + this.evaluationsParPage;
+    return filtered.slice(debut, fin);
   }
 
-  // 3. Time filter
-  if (this.filtres.heure) {
-    const [h, m] = this.filtres.heure.split(':');
-    filtered = filtered.filter(e => {
-      if (!e.dateHeure) return false;
-      const evalDate = new Date(e.dateHeure);
-      return evalDate.getHours() === +h && evalDate.getMinutes() === +m;
-    });
-  }
-
-  // 4. Status filter
-  if (this.filtres.statut && this.filtres.statut !== 'Tout les statuts') {
-    filtered = filtered.filter(e => e.statut === this.filtres.statut);
-  }
-
-  // 5. Candidate name filter
-  if (this.filtres.candidat?.trim()) {
-    const search = this.filtres.candidat.trim().toLowerCase();
-    filtered = filtered.filter(e => 
-      `${e.candidat.nom} ${e.candidat.prenom}`.
-        toLowerCase().includes(search) ||
-      `${e.candidat.prenom} ${e.candidat.nom}`.
-        toLowerCase().includes(search)
-    );
-  }
-
-  // Filtre par nom/prénom candidat OU jury
-  if (this.filtres.recherche?.trim()) {
-    const search = this.filtres.recherche.trim().toLowerCase();
-    filtered = filtered.filter(e =>
-      (`${e.candidat.nom} ${e.candidat.prenom}`.toLowerCase().includes(search) ||
-       `${e.candidat.prenom} ${e.candidat.nom}`.toLowerCase().includes(search) ||
-       `${e.jury.nom} ${e.jury.prenom}`.toLowerCase().includes(search) ||
-       `${e.jury.prenom} ${e.jury.nom}`.toLowerCase().includes(search))
-    );
-  }
-
-  this.totalEvaluations = filtered.length;
-  const debut = (this.pageActuelle - 1) * this.evaluationsParPage;
-  const fin = debut + this.evaluationsParPage;
-  return filtered.slice(debut, fin);
-}
-
-
+  /**
+   * Génère les numéros de page disponibles
+   */
   get pages(): number[] {
     const totalPages = Math.ceil(this.totalEvaluations / this.evaluationsParPage);
     return Array(totalPages).fill(0).map((_, index) => index + 1);
   }
 
+  /**
+   * Réinitialise la recherche par candidat
+   */
   nettoyerRecherche(): void {
     this.filtres.candidat = '';
     this.appliquerFiltres();
   }
 
+  /**
+   * Navigation vers l'édition d'une évaluation
+   * @param evaluation Évaluation à éditer
+   */
   evaluer(evaluation: Evaluation): void {
     this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
     this.evaluationService.setSelectedEvaluationId(evaluation.id);
@@ -286,34 +329,29 @@ get evaluationsAffichees(): Evaluation[] {
     }
   }
 
+  /**
+   * Navigation vers la visualisation d'une évaluation
+   * @param evaluation Évaluation à visualiser
+   */
   voirEvaluation(evaluation: Evaluation): void {
     this.evaluationService.setViewMode(true);
 
-    if (evaluation && evaluation.id && evaluation.candidatId) {
+    if (evaluation?.id && evaluation.candidatId) {
       this.evaluationService.setSelectedEvaluationId(evaluation.id);
       this.evaluationService.setSelectedCandidatId(evaluation.candidatId);
-      this.evaluationService.setViewMode(true);
 
-      const currentUser = this.evaluationService.getCurrentUser();
-      if (currentUser) {
-        const juryId = currentUser.id;
-        console.log('Jury ID connecté :', juryId);
-      } else {
-        console.warn('Aucun utilisateur connecté trouvé.');
-      }
-
+      // Chargement des détails du candidat
       this.evaluationService.getCandidat(evaluation.candidatId).subscribe(
         (candidatInfo) => {
           this.evaluationService.setSelectedCandidatDetails(candidatInfo);
         },
         (error) => {
-          console.error('Erreur lors de la récupération des détails du candidat:', error);
+          console.error('Erreur détails candidat:', error);
           this.evaluationService.setSelectedCandidatDetails(null);
         }
       );
 
-      console.log('Évaluation sélectionnée:', evaluation);
-
+      // Navigation
       if (this.setSousMenu) {
         this.setSousMenu('ajouter-evaluation');
       } else {
@@ -322,15 +360,23 @@ get evaluationsAffichees(): Evaluation[] {
         });
       }
     } else {
-      console.error('L\'évaluation ne contient pas d\'ID ou de candidatId valide');
+      console.error('Évaluation invalide');
     }
   }
 
+  /**
+   * Formate le nom complet d'un candidat
+   * @param candidat Objet avec nom et prenom
+   */
   getNomPrenomCandidat(candidat: { nom: string; prenom: string }): string {
     if (!candidat) return '';
     return `${candidat.nom ?? ''} ${candidat.prenom ?? ''}`.trim();
   }
 
+  /**
+   * Formate une date pour l'affichage
+   * @param date Date à formater
+   */
   formatDate(date: Date | null): string {
     if (!date) return 'Date non définie';
     
@@ -343,14 +389,17 @@ get evaluationsAffichees(): Evaluation[] {
         minute: '2-digit'
       }).format(date);
     } catch (error) {
-      console.error('Erreur de formatage de date:', error);
+      console.error('Erreur formatage date:', error);
       return 'Date invalide';
     }
   }
 
-  // Méthode utilitaire pour débugger
+  /**
+   * Log les détails d'une évaluation (debug)
+   * @param evaluation Évaluation à logger
+   */
   logEvaluation(evaluation: Evaluation): void {
-    console.log('Détails de l\'évaluation:', {
+    console.log('Détails évaluation:', {
       id: evaluation.id,
       sujet: evaluation.sujet,
       dateHeure: evaluation.dateHeure,

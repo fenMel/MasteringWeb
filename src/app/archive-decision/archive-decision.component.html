@@ -1,0 +1,37 @@
+<h2>Décisions archivées</h2>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Candidat</th>
+    <th>Jury</th>
+    <th>Moyenne</th>
+    <th>Commentaire</th>
+    <th>Verdict</th>
+    <th>Date archivage</th>
+    <th>Archivé par</th>
+  </tr>
+  <tr *ngFor="let archive of archives">
+    <td data-label="ID">{{ archive.id }}</td>
+    <td data-label="Candidat">
+      {{ archive.candidatPrenom }} {{ archive.candidatNom }}
+      <small *ngIf="archive.candidatId">(ID: {{ archive.candidatId }})</small>
+    </td>
+    <td data-label="Jury">
+      {{ archive.juryPrenom }} {{ archive.juryNom }}
+      <small *ngIf="archive.juryId">(ID: {{ archive.juryId }})</small>
+    </td>
+    <td data-label="Moyenne">{{ archive.moyenne }}</td>
+    <td data-label="Commentaire">{{ archive.commentaire }}</td>
+    <td data-label="Verdict">
+      <span [ngClass]="{
+        'status-green': archive.verdict === 'ADMIS',
+        'status-red': archive.verdict === 'NON_ADMIS',
+        'status-blue': archive.verdict === 'RATTRAPAGE'
+      }">
+        {{ archive.verdict }}
+      </span>
+    </td>
+    <td data-label="Date archivage">{{ archive.dateArchivage | date:'short' }}</td>
+    <td data-label="Archivé par">{{ archive.archivePar }}</td>
+  </tr>
+</table>

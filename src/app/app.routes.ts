@@ -7,6 +7,7 @@ import { AjouterFormationComponent } from './ajouter-formation/ajouter-formation
 import { GestionFormationsComponent } from './gestion-formations/gestion-formations.component';
 import { SessionsFormationComponent } from './sessions-formation/sessions-formation.component';
 import { AjouterEvaluationComponent } from './ajouter-evaluation/ajouter-evaluation.component';
+import { ArchiveDecisionComponent } from './archive-decision/archive-decision.component';
 
 
 export const routes: Routes = [
@@ -18,9 +19,11 @@ export const routes: Routes = [
 
     { path: 'ajouter-formation', component: AjouterFormationComponent },
     { path: 'ajouter-evaluation', component: AjouterEvaluationComponent }, 
+    { path: 'ArchiveDecision', component: ArchiveDecisionComponent }, 
+
 
     { path: 'sessions-formation', component: SessionsFormationComponent }
-        // autres routes...
+    
 
 ];
 
