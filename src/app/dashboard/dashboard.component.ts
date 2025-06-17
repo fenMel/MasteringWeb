@@ -18,7 +18,7 @@ import { Decision } from '../decision/decision.model';
 import { UsersListComponent } from '../user-list/user-list.component';
 import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
 import { CandidatDecisionComponent } from '../candidat-decision/candidat-decision.component';
-
+import { ArchiveDecisionComponent } from '../archive-decision/archive-decision.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -36,7 +36,8 @@ import { CandidatDecisionComponent } from '../candidat-decision/candidat-decisio
     DecisionComponent,
     VoirDecisionComponent,
     UsersListComponent,
-    CandidatDecisionComponent
+    CandidatDecisionComponent,
+    ArchiveDecisionComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
