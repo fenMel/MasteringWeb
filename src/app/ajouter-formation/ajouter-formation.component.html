@@ -1,41 +1,82 @@
 <div class="main-form">
-    <div class="form-header">
-      <h1>Ajouter une Formation</h1>
-      <button (click)="retourListe()" class="btn-cancel">← Retour à la liste</button>
-    </div>
-    <form class="formulaire">
-      <div class="form-group">
-        <label for="nom">Nom de la formation<span class="required">*</span></label>
-        <input type="text" id="nom" placeholder="Ex : Master en Développement Web" required />
-      </div>
-      <div class="form-group">
-        <label for="niveau">Niveau</label>
-        <input type="text" id="niveau" value="Master" readonly />
-      </div>
-      <div class="form-group">
-        <label for="code">Code RNCP</label>
-        <input type="text" id="code" placeholder="Ex : RNCP35634" />
-      </div>
-      <div class="form-group">
-        <label for="description">Description détaillée<span class="required">*</span></label>
-        <textarea id="description" placeholder="Décrivez le contenu et les objectifs..."></textarea>
-      </div>
-      <div class="form-group">
-        <label for="duree">Durée (en heures)<span class="required">*</span></label>
-        <input type="number" id="duree" placeholder="Ex : 600" required />
-      </div>
-      <div class="form-group">
-        <label for="prerequis">Prérequis</label>
-        <textarea id="prerequis" placeholder="Listez les prérequis nécessaires..."></textarea>
-      </div>
-      <div class="form-group">
-        <label for="objectifs">Objectifs pédagogiques</label>
-        <textarea id="objectifs" placeholder="Compétences acquises à la fin..."></textarea>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-save">Enregistrer</button>
-        <a routerLink="/" class="btn-cancel">Annuler</a>
-      </div>
-    </form>
+  <div class="form-header">
+    <h1>Ajouter une Formation</h1>
+    <button (click)="retourListe()" class="btn-cancel">← Retour à la liste</button>
   </div>
-  
+  <form class="formulaire" (ngSubmit)="ajouterFormation()">
+    <div class="form-group">
+      <label for="nom">Nom de la formation<span class="required">*</span></label>
+      <input
+        type="text"
+        id="nom"
+        [(ngModel)]="formation.nom"
+        name="nom"
+        placeholder="Ex : Master en Développement Web"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="niveau">Niveau</label>
+      <input
+        type="text"
+        id="niveau"
+        [(ngModel)]="formation.niveau"
+        name="niveau"
+        readonly
+      />
+    </div>
+    <div class="form-group">
+      <label for="code">Code RNCP</label>
+      <input
+        type="text"
+        id="code"
+        [(ngModel)]="formation.codeRncp"
+        name="codeRncp"
+        placeholder="Ex : RNCP35634"
+      />
+    </div>
+    <div class="form-group">
+      <label for="description">Description détaillée<span class="required">*</span></label>
+      <textarea
+        id="description"
+        [(ngModel)]="formation.description"
+        name="description"
+        placeholder="Décrivez le contenu et les objectifs..."
+        required
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="duree">Durée (en heures)<span class="required">*</span></label>
+      <input
+        type="number"
+        id="duree"
+        [(ngModel)]="formation.duree"
+        name="duree"
+        placeholder="Ex : 600"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="prerequis">Prérequis</label>
+      <textarea
+        id="prerequis"
+        [(ngModel)]="formation.prerequis"
+        name="prerequis"
+        placeholder="Listez les prérequis nécessaires..."
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="objectifs">Objectifs pédagogiques</label>
+      <textarea
+        id="objectifs"
+        [(ngModel)]="formation.objectifs"
+        name="objectifs"
+        placeholder="Compétences acquises à la fin..."
+      ></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-save">Enregistrer</button>
+      <button type="button" (click)="retourListe()" class="btn-cancel">Annuler</button>
+    </div>
+  </form>
+</div>

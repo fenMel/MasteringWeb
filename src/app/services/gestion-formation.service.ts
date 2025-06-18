@@ -24,6 +24,12 @@ export class GestionFormationService {
    constructor(private authService: AuthService, private http: HttpClient) { }
    private apiUrl = environment.apiUrl;
 
+   private getAuthHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: 'Bearer ' + this.authService.getToken(),
+      'Content-Type': 'application/json'
+    });
+  }
   getFormations(): Observable<Formation[]> {
     if(this.authService.getToken() == null){
       this.authService.getTokenFromSessionStorage();
@@ -37,10 +43,14 @@ export class GestionFormationService {
   }
 
   modifierFormation(id: number, formation: Formation): Observable<Formation> {
-    return this.http.put<Formation>(`${this.apiUrl}/${id}`, formation);
+    return this.http.put<Formation>(`${this.apiUrl}/api/formations/${id}`, formation);
+    
   }
 
-  supprimerFormation(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  supprimerFormation(id: number): Observable<string> {
+    return this.http.delete<string>(`${this.apiUrl}/${id}/force-delete`, {
+      headers: this.getAuthHeaders()
+    });
+  
   }
 }

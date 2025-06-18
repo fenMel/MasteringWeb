@@ -59,6 +59,19 @@ export class GestionFormationsComponent implements OnInit {
     }
   }
 
+  supprimerEvaluation(id: number) {
+    this.formationService.supprimerFormation(id).subscribe({
+      next: (message) => {
+        alert('Évaluation supprimée avec succès : ' + message);
+        this.chargerFormations(); // Recharge la liste des formations
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression :', err);
+        alert('Erreur : ' + (err.error?.message || 'Action non autorisée'));
+      }
+    });
+  }
+
   selectionnerFormation(formation: Formation) {
     this.formationSelectionnee = { ...formation };
   }
