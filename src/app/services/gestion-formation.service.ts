@@ -42,14 +42,16 @@ export class GestionFormationService {
     return this.http.post<Formation>(this.apiUrl, formation);
   }
 
-  modifierFormation(id: number, formation: Formation): Observable<Formation> {
-    return this.http.put<Formation>(`${this.apiUrl}/api/formations/${id}`, formation);
+  modifierFormation(id: number, formation: any): Observable<any> {
+    return this.http.put<string>(`${this.apiUrl}/api/formations/${id}`, formation, {
+      headers: { 'Content-Type': 'application/json' }
+    });
     
   }
 
   supprimerFormation(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/${id}/force-delete`, {
-      headers: this.getAuthHeaders()
+    return this.http.delete<string>(`${this.apiUrl}/api/formations/delete/${id}`, {
+      
     });
   
   }

@@ -28,7 +28,7 @@
           <td>{{ formation.duree }}</td>
           <td class="action-buttons">
             <button class="btn btn-view" (click)="selectionnerFormation(formation)">Modifier</button>
-            <button class="btn btn-delete" (click)="supprimerFormation(formation.id)">✕</button>
+            <button class="btn btn-delete" (click)="supprimerFormation(formation.id!)">✕</button>
           </td>
         </tr>
       </tbody>
@@ -39,7 +39,7 @@
   <div *ngIf="formationSelectionnee" class="formulaire mt-5">
     <h2 class="mb-3">{{ formationSelectionnee.id ? 'Modifier' : 'Ajouter' }} une Formation</h2>
 
-    <form ngForm (ngSubmit)="formationSelectionnee.id ? modifierFormation() : ajouterFormation()">
+    <form ngForm (ngSubmit)="formationSelectionnee.id ? modifierFormation(formationSelectionnee.id) : ajouterFormation()">
       <div class="form-group">
         <input type="text" [(ngModel)]="formationSelectionnee.nom" name="nom" placeholder="Nom de la formation" required />
       </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { GestionFormationService, Formation } from '../services/gestion-formation.service';
@@ -10,7 +10,7 @@ import { Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './gestion-formations.component.html',
-  styleUrls: ['./gestion-formations.component.scss'] // ✅ bon
+  styleUrls: ['./gestion-formations.component.scss']
 })
 
 
@@ -20,8 +20,16 @@ export class GestionFormationsComponent implements OnInit {
   formations: Formation[] = [];
   formationSelectionnee: Formation | null = null;
   searchText: string = '';
+  form: FormGroup;
 
-  constructor(private formationService: GestionFormationService) {}
+  constructor(
+    private formationService: GestionFormationService,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      nom: [''],
+    });
+  }
 
   ngOnInit(): void {
     this.chargerFormations();
@@ -42,28 +50,37 @@ export class GestionFormationsComponent implements OnInit {
     }
   }
 
-  modifierFormation() {
-    if (this.formationSelectionnee && this.formationSelectionnee.id) {
-      this.formationService.modifierFormation(this.formationSelectionnee.id, this.formationSelectionnee).subscribe(() => {
+  modifierFormation(id: number) {
+    const formationToSend = { ...this.formationSelectionnee };
+    delete (formationToSend as any).sessionsFormation;
+    delete (formationToSend as any).id;
+
+    console.log('Payload envoyé :', formationToSend);
+
+    this.formationService.modifierFormation(id, formationToSend).subscribe({
+      next: (res) => {
         this.chargerFormations();
         this.formationSelectionnee = null;
-      });
-    }
+      },
+      error: (err) => {
+        console.error('Erreur backend :', err);
+      }
+    });
   }
 
-  supprimerFormation(id?: number) {
-    if (id && confirm('Voulez-vous vraiment supprimer cette formation ?')) {
-      this.formationService.supprimerFormation(id).subscribe(() => {
-        this.chargerFormations();
-      });
-    }
-  }
+  // supprimerFormation(id?: number) {
+  //   if (id && confirm('Voulez-vous vraiment supprimer cette formation ?')) {
+  //     this.formationService.supprimerFormation(id).subscribe(() => {
+  //       this.chargerFormations();
+  //     });
+  //   }
+  // }
 
-  supprimerEvaluation(id: number) {
+ supprimerFormation(id: number) {
     this.formationService.supprimerFormation(id).subscribe({
       next: (message) => {
-        alert('Évaluation supprimée avec succès : ' + message);
-        this.chargerFormations(); // Recharge la liste des formations
+        alert('Formation supprimée avec succès : ' );
+        this.chargerFormations();
       },
       error: (err) => {
         console.error('Erreur lors de la suppression :', err);
