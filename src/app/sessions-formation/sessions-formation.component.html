@@ -1,45 +1,68 @@
-<div class="container">
-  <h2>Sessions de formations</h2>
+<div class="bg-light p-3 rounded shadow-sm">
+  <!-- Bandeau haut avec bouton + filtres -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <button class="btn btn-primary" (click)="ajouterSession()">+ Ajouter une session</button>
 
-  <div class="filters">
-    <label for="filter">Filtrer par :</label>
-    <select id="filter" [(ngModel)]="selectedFilter">
-      <option value="title">Titres</option>
-      <option value="description">Description</option>
-      <option value="formation">Formation</option>
-    </select>
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Rechercher une session..."
+        [(ngModel)]="filtres.titre"
+        (input)="appliquerFiltres()"
+      />
 
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher une session ..." />
+      <!-- <select class="form-select" [(ngModel)]="filtres.formation" (change)="appliquerFiltres()">
+        <option *ngFor="let option of optionsFormation" [value]="option">{{ option }}</option>
+      </select> -->
+    </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Titres</th>
-        <th>Formation</th>
-        <th>Description</th>
-        <th>Début</th>
-        <th>Fin</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let session of filteredSessions()">
-        <td>{{ session.title }}</td>
-        <td>{{ session.formation }}</td>
-        <td >{{ session.description }}</td>
-        <td>{{ session.start }}</td>
-        <td>{{ session.end }}</td>
-        <td><button class="view-btn" (click)="voirSession(session)">Voir</button></td>
-        <td><button class="edit-btn" (click)="voirSession(session)">Modifier</button></td>
-
-      </tr>
-    </tbody>
-  </table>
-  
-  <div class="add-btn-container">
-    <button class="add-btn">+ Ajouter une session</button>
+  <!-- Tableau des sessions -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle bg-white rounded shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Titre</th>
+          <th>Formation</th>
+          <th>Description</th>
+          <th>Date Début</th>
+          <th>Date Fin</th>
+          <th>Candidats</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of sessionsAffichees; trackBy: trackBySession">
+          <td>{{ session.titre }}</td>
+          <td>{{ session.formation.nom }}</td>
+          <td>{{ session.description }}</td>
+          <td>{{ session.dateDebut }}</td>
+          <td>{{ session.dateFin }}</td>
+          <td>{{ session.candidats.length || 0 }}</td>
+          <td class="text-end">
+            <button class="btn btn-primary btn-sm me-1" (click)="voirSession(session)">Voir</button>
+            <button class="btn btn-warning btn-sm me-1" (click)="modifierSession(session)">Modifier</button>
+            <button class="btn btn-danger btn-sm me-1" (click)="supprimerSession(session)">X</button>
+          </td>
+        </tr>
+        <tr *ngIf="sessionsAffichees.length === 0">
+          <td colspan="7" class="text-center">Aucune session trouvée</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <p class="footer-note">Affichage des sessions de formations</p>
+  <!-- Pagination -->
+  <nav *ngIf="pages.length > 1" class="mt-3">
+    <ul class="pagination justify-content-center">
+      <li
+        class="page-item"
+        *ngFor="let page of pages"
+        [class.active]="page === pageActuelle"
+      >
+        <button class="page-link" (click)="pageActuelle = page">{{ page }}</button>
+      </li>
+    </ul>
+  </nav>
 </div>

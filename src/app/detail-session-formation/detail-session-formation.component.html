@@ -1,0 +1,23 @@
+<div *ngIf="session" class="detail-container">
+  <h2>Détail de la session : {{ session.titre }}</h2>
+
+  <p><strong>Description :</strong> {{ session.description }}</p>
+  <p><strong>Date début :</strong> {{ session.dateDebut }}</p>
+  <p><strong>Date fin :</strong> {{ session.dateFin }}</p>
+  <p><strong>Formation :</strong> {{ session.formation.nom }}</p>
+
+    <p><strong>Nombre de candidats :</strong> {{ session.candidats.length || 0 }}</p>
+   
+  <h3>Candidats inscrits :</h3>
+  <ul>
+    <li *ngFor="let candidat of session.candidats">
+      {{ candidat.prenom }} {{ candidat.nom }} ({{ candidat.email }})
+    </li>
+  </ul>
+
+  <!-- Boutons alignés à droite -->
+  <div class="btn-group-right">
+    <button (click)="annuler()" class="btn-retour">Retour</button>
+    <button (click)="supprimerSession()" class="btn-supprimer">Supprimer</button>
+  </div>
+</div>

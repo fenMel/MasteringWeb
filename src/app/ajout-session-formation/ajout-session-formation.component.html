@@ -1,0 +1,113 @@
+<div class="card p-4 shadow-sm rounded-3">
+<!-- Titre + retour -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h4 class="mb-0">
+     {{ session.id ? 'Modifier' : 'Ajouter' }} une Session de Formation
+</h4>
+<button (click)="retour()" class="btn btn-outline-secondary">← Retour</button>
+</div>
+<!-- Titre de la session -->
+<div class="mb-3">
+<label for="titre" class="form-label">Titre de la session *</label>
+<input
+     id="titre"
+     type="text"
+     class="form-control"
+     [(ngModel)]="session.titre"
+     name="titre"
+     placeholder="Ex : Session Printemps 2025"
+     required
+   />
+<div *ngIf="!session.titre" class="text-danger mt-1">Le titre est requis.</div>
+</div>
+<!-- Description -->
+<div class="mb-3">
+<label for="description" class="form-label">Description *</label>
+<textarea
+     id="description"
+     class="form-control"
+     rows="3"
+     [(ngModel)]="session.description"
+     name="description"
+     placeholder="Décrivez les objectifs ou le contenu de cette session"
+     required
+></textarea>
+<div *ngIf="!session.description" class="text-danger mt-1">La description est requise.</div>
+</div>
+<!-- Formation -->
+<div class="mb-3">
+<label for="formation" class="form-label">Formation associée *</label>
+<select
+     id="formation"
+     class="form-select"
+     [(ngModel)]="session.formation"
+     name="formation"
+     required
+>
+<option [ngValue]="null" disabled>
+       -- Sélectionner une formation --
+</option>
+<option *ngFor="let f of formations" [ngValue]="f">
+       {{ f.nom }}
+</option>
+</select>
+<div *ngIf="!session.formation" class="text-danger mt-1">Veuillez choisir une formation.</div>
+</div>
+<!-- Date de début -->
+<div class="mb-3">
+<label for="dateDebut" class="form-label">Date de début *</label>
+<input
+     id="dateDebut"
+     type="date"
+     class="form-control"
+     [(ngModel)]="session.dateDebut"
+     name="dateDebut"
+     required
+   />
+<div *ngIf="!session.dateDebut" class="text-danger mt-1">La date de début est requise.</div>
+</div>
+<!-- Date de fin -->
+<div class="mb-3">
+<label for="dateFin" class="form-label">Date de fin *</label>
+<input
+     id="dateFin"
+     type="date"
+     class="form-control"
+     [(ngModel)]="session.dateFin"
+     name="dateFin"
+     required
+   />
+<div *ngIf="!session.dateFin" class="text-danger mt-1">La date de fin est requise.</div>
+</div>
+<!-- Sélection des candidats -->
+<div class="mb-3">
+<label for="candidats" class="form-label">Sélectionner les candidats *</label>
+<select
+
+    id="candidats"
+
+    class="form-select"
+
+    multiple
+
+    [(ngModel)]="session.candidatsIds"
+
+    name="candidatsIds"
+>
+<option *ngFor="let candidat of candidats" [ngValue]="candidat.id">
+
+      {{ candidat.nom }} {{ candidat.prenom }}
+</option>
+</select>
+<small class="text-muted">
+
+    {{ session.candidatsIds.length || 0 }} candidat(s) sélectionné(s)
+</small>
+</div>
+ 
+<!-- Boutons d'action -->
+<div class="d-flex justify-content-end gap-2 mt-4">
+<button (click)="enregistrer()" type="button" class="btn btn-primary">Enregistrer</button>
+<button (click)="annuler()" type="button" class="btn btn-secondary">Annuler</button>
+</div>
+</div>
