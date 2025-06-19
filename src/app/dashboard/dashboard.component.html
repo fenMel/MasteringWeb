@@ -145,15 +145,31 @@
      </ng-container>
 
 
-    <ng-container *ngIf="activeMenu === 'ListeSessionsFormation'">
+    <!-- Liste des sessions de formation -->
+<app-sessions-formation
 
-      <!-- Affiche le tableau -->
-      <app-sessions-formation
-        *ngIf="sousMenu === 'liste'"
-        [setSousMenu]="setSousMenu">
-      </app-sessions-formation>
+  *ngIf="activeMenu === 'ListeSessionsFormation' && sousMenu === 'liste'"
 
-    </ng-container>
+  [setSousMenu]="setSousMenu">
+</app-sessions-formation>
+<!-- Ajouter une session de formation -->
+<app-ajout-session-formation
+
+  *ngIf="activeMenu === 'ListeSessionsFormation' && sousMenu === 'ajouter'">
+</app-ajout-session-formation>
+<!-- Voir une session -->
+<app-detail-session-formation
+
+  *ngIf="activeMenu === 'ListeSessionsFormation' && sousMenu === 'detail-session'">
+</app-detail-session-formation>
+<!-- Modifier une session -->
+<app-edit-session-formation
+
+  *ngIf="activeMenu === 'ListeSessionsFormation' && sousMenu === 'edit-session'">
+</app-edit-session-formation>
+ 
+
+
 
        <!-- Component pour l'ajout des utilisateurs -->
        <ng-container *ngIf="activeMenu === 'ajout_utilisateurs'">

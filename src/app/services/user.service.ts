@@ -5,11 +5,16 @@ import { User } from './user.model';
 import { environment } from '../../environments/environment.prod';
 import {AuthService} from './auth.service';
 import {Evaluation} from '../evaluation/evaluation.model';
+import { UserDTO } from '../sessions-formation/session-formation.model';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  getUsersParRole(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = environment.apiUrl ;
 
   constructor(private authService: AuthService, private http: HttpClient) {}
@@ -62,4 +67,42 @@ export class UserService {
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
   }
+
+//  getAllCandidats(p0: string): Observable<User[]> {
+//   return this.http.get<User[]>(`${this.apiUrl}/candidat`, {
+//     headers: this.getAuthHeaders()
+//   });
+// }
+
+ // ✅ Nouvelle méthode à ajouter
+  getCandidatById(p0: string): Observable<User[]> {
+    return this.http.get<User[]>('http://localhost:8080/candidats');
+  }
+
+// getUsersByRole(role: string): Observable<UserDTO[]> {
+//   return this.http.get<UserDTO[]>(`${this.apiUrl}/api/candidats/${role}`, {
+//     headers: this.getAuthHeaders()
+//   });
+// }
+
+getUsersByRole(role: string): Observable<UserDTO[]> {
+  return this.http.get<UserDTO[]>(`/api/users/role/${role}`);
+}
+
+ 
+
+  // getAllCandidats(role: string = 'CANDIDAT'): Observable<UserDTO[]> {
+  //   return this.http.get<UserDTO[]>(`${this.apiUrl}/api/users/role/${role}`, {
+  //     headers: this.getAuthHeaders()
+  //   });
+  // }
+  
+
+
+getAllCandidats(): Observable<UserDTO[]> {
+ return this.http.get<UserDTO[]>(`${this.apiUrl}/users/candidats`, {
+   headers: this.authService.getAuthHeaders()
+ });
+}
+
 }

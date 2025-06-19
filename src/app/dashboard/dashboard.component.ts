@@ -13,6 +13,9 @@ import { EvaluationService } from '../services/evaluation.service';
 
 import { ActivatedRoute } from '@angular/router';
 import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.component';
+import { AjoutSessionFormationComponent } from "../ajout-session-formation/ajout-session-formation.component";
+import { DetailSessionFormationComponent } from "../detail-session-formation/detail-session-formation.component";
+import { EditSessionFormationComponent } from "../edit-session-formation/edit-session-formation.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -26,8 +29,11 @@ import {AjoutUtilisateurs, } from '../ajout-utilisateurs/ajout-utilisateurs.comp
     AjouterFormationComponent,
     SessionsFormationComponent,
     AjouterEvaluationComponent,
-    AjoutUtilisateurs
-  ],
+    AjoutUtilisateurs,
+    AjoutSessionFormationComponent,
+    DetailSessionFormationComponent,
+    EditSessionFormationComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -92,12 +98,18 @@ export class DashboardComponent implements OnInit {
 
 
 
-  setActiveMenu = (menu: string): void => {
-    this.activeMenu = menu;
-    if (menu === 'ListeFormations' || menu === 'ListeSessionsFormation') {
-      this.sousMenu = 'liste';
-    }
-  };
+setActiveMenu = (menu: string): void => {
+  this.activeMenu = menu;
+  if (menu === 'ListeFormations' || menu === 'ListeSessionsFormation') {
+    this.sousMenu = 'liste';
+  }
+};
+
+changerSousMenu(nouveau: string): void {
+  this.sousMenu = nouveau;
+}
+
+  
 
   setSousMenu = (menu: string): void => {
     this.sousMenu = menu;
@@ -123,3 +135,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 }
+function changerSousMenu(nouveau: any, string: any) {
+  throw new Error('Function not implemented.');
+}
+

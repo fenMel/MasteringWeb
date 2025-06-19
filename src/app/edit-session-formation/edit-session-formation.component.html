@@ -1,0 +1,42 @@
+<h2>Modifier une session de formation</h2>
+
+<div *ngIf="session">
+  <label>Titre</label>
+  <input type="text" [(ngModel)]="session.titre">
+
+  <label>Description</label>
+  <textarea [(ngModel)]="session.description"></textarea>
+
+  <label>Date de début</label>
+  <input type="date" [(ngModel)]="session.dateDebut">
+
+  <label>Date de fin</label>
+  <input type="date" [(ngModel)]="session.dateFin">
+
+  <label>Formation</label>
+  <select [(ngModel)]="session.formation.id">
+    <option *ngFor="let f of formations" [value]="f.id">{{ f.nom }}</option>
+  </select>
+
+  <h3>Candidats</h3>
+  <div *ngFor="let candidat of candidats">
+    <input
+      type="checkbox"
+      [id]="'candidat-' + candidat.id"
+      [value]="candidat.id"
+      [(ngModel)]="candidatsIdsSelectionnes"
+      name="candidatsIdsSelectionnes"
+      multiple
+    />
+    <label [for]="'candidat-' + candidat.id">
+      {{ candidat.prenom }} {{ candidat.nom }}
+    </label>
+  </div>
+
+  <button (click)="enregistrer()">Enregistrer</button>
+  <button (click)="annuler()">Annuler</button>
+</div>
+
+<div *ngIf="!session">
+  Chargement de la session...
+</div>

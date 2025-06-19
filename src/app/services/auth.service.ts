@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.prod';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 
@@ -172,6 +172,12 @@ export class AuthService {
    // console.log("Aucune méthode de vérification n'a fonctionné");
     return false;
   }
+
+  getAuthHeaders(): HttpHeaders {
+ return new HttpHeaders({
+   Authorization: 'Bearer ' + this.getToken()
+ });
+}
 
   isJury() {
     if (this.jwtToken == null) {
