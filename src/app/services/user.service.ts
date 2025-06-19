@@ -5,6 +5,7 @@ import { User } from './user.model';
 import { environment } from '../../environments/environment.prod';
 import {AuthService} from './auth.service';
 import {Evaluation} from '../evaluation/evaluation.model';
+import { UserDTO } from '../sessions-formation/session-formation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,5 +67,65 @@ export class UserService {
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+   /**
+   * Crée un nouvel utilisateur
+   * @param user Les données de l'utilisateur à créer
+   */
+
+
+  
+
+  /**
+   * Met à jour un utilisateur existant
+   * @param id L'ID de l'utilisateur
+   * @param user Les nouvelles données de l'utilisateur
+   */
+  // updateUser(id: string, user: User): Observable<any> {
+  //   return this.http.put(`${this.apiUrl}/${id}`, user);
+  // }
+
+  
+  //  */
+  // getAllUsers(): Observable<User[]> {
+  //   return this.http.get<User[]>(this.apiUrl);
+  // }
+
+//  getAllCandidats(p0: string): Observable<User[]> {
+//   return this.http.get<User[]>(`${this.apiUrl}/candidat`, {
+//     headers: this.getAuthHeaders()
+//   });
+// }
+
+ // ✅ Nouvelle méthode à ajouter
+  // getCandidatById(p0: string): Observable<User[]> {
+  //   return this.http.get<User[]>('http://localhost:8080/candidats');
+  // }
+
+// getUsersByRole(role: string): Observable<UserDTO[]> {
+//   return this.http.get<UserDTO[]>(`${this.apiUrl}/api/candidats/${role}`, {
+//     headers: this.getAuthHeaders()
+//   });
+// }
+
+getUsersByRole(role: string): Observable<UserDTO[]> {
+  return this.http.get<UserDTO[]>(`/api/users/role/${role}`);
+}
+
+ 
+
+  // getAllCandidats(role: string = 'CANDIDAT'): Observable<UserDTO[]> {
+  //   return this.http.get<UserDTO[]>(`${this.apiUrl}/api/users/role/${role}`, {
+  //     headers: this.getAuthHeaders()
+  //   });
+  // }
+  
+
+
+getAllCandidats(): Observable<UserDTO[]> {
+ return this.http.get<UserDTO[]>(`${this.apiUrl}/users/candidats`, {
+   headers: this.authService.getAuthHeaders()
+ });
+}
 
 }

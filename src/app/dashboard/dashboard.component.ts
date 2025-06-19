@@ -19,6 +19,9 @@ import { UsersListComponent } from '../user-list/user-list.component';
 import { GestionEvaluationComponent } from '../gestion-evaluation/gestion-evaluation.component';
 import { CandidatDecisionComponent } from '../candidat-decision/candidat-decision.component';
 import { ArchiveDecisionComponent } from '../archive-decision/archive-decision.component';
+import { AjoutSessionFormationComponent } from '../ajout-session-formation/ajout-session-formation.component';
+import { EditSessionFormationComponent } from '../edit-session-formation/edit-session-formation.component';
+import { DetailSessionFormationComponent } from '../detail-session-formation/detail-session-formation.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -37,7 +40,11 @@ import { ArchiveDecisionComponent } from '../archive-decision/archive-decision.c
     VoirDecisionComponent,
     UsersListComponent,
     CandidatDecisionComponent,
-    ArchiveDecisionComponent
+    ArchiveDecisionComponent,
+    AjoutSessionFormationComponent,
+    EditSessionFormationComponent,
+    DetailSessionFormationComponent
+
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -112,6 +119,14 @@ export class DashboardComponent implements OnInit {
       this.sousMenu = 'liste';
     }
   };
+
+//   setActiveMenu = (menu: string): void => {
+//   this.activeMenu = menu;
+//   if (menu === 'ListeFormations' || menu === 'ListeSessionsFormation') {
+//     this.sousMenu = 'liste';
+//   }
+// };
+
 
   setSousMenu = (menu: string, decision?: Decision): void => {
     this.sousMenu = menu;
